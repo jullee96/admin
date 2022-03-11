@@ -1,0 +1,172 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Sign Up | Hamonize Cloud Service</title>
+
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="../../vendors/feather/feather.css">
+  <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../../images/favicon.png" />
+
+  <!-- form validation check -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script> 
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+  <script src="/js/form-validation.js"></script>
+
+</head>
+
+
+<style>
+  .id_ok{
+      color:#fff; 
+      display: none;
+  }
+  
+  .id_already{
+      color:#6A82FB; 
+      display: none;
+  }
+  
+</style>
+
+<body>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth px-0">
+        <div class="row w-100 mx-0">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              <div class="brand-logo">
+                <img src="img/Hamonize.png" alt="logo">
+              </div>
+              <h4>가입하기</h4>
+              <h6 class="font-weight-light">하모나이즈 서비스를 이용하기 위해서는 몇가지 단계만 거치면 됩니다</h6>
+              <form class="pt-3">
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-lg"  name="username" id="username" placeholder="이름">
+                </div>
+                
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-lg"  name="userid" id="userid" placeholder="아이디">
+                  <span id="id_ok" class="id_ok">사용 가능한 아이디입니다</span>
+                  <span id="id_already" class="id_already">이미 사용중인 아이디입니다</span>
+                </div>
+                <div class="form-group">
+                  <input type="email" class="form-control form-control-lg" name="email" id="email" placeholder="이메일">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control form-control-lg"  name="passwd" id="passwd" placeholder="비밀번호">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control form-control-lg"  name="re_passwd" id="re_passwd" placeholder="비밀번호">
+                </div>
+
+                <div class="mb-4">
+                  <div class="form-check">
+                    <label class="form-check-label text-muted">
+                      <input type="checkbox" class="form-check-input">
+                      모든 약관과 정책에 동의하십니끼?
+                    </label>
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="/main">SIGN UP</a>
+                </div>
+                <div class="text-center mt-4 font-weight-light">
+                  이미 계정이 있으신가요? <a href="login.html" class="text-primary">Login</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="../../vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="../../js/off-canvas.js"></script>
+  <script src="../../js/hoverable-collapse.js"></script>
+  <script src="../../js/template.js"></script>
+  <script src="../../js/settings.js"></script>
+  <script src="../../js/todolist.js"></script>
+  <!-- endinject -->
+
+
+
+<script>
+  $(document).ready(function () {
+  
+      // $("#register-form").validate({
+      //   submitHandler: function(form) {
+      //       form.submit();
+      //   }  
+      // });
+      $.validator.addMethod("idDupChk",  function(cnt, element){
+          if(cnt == 0) {
+              return true;
+          }else{
+              return this.optional(element)|| false;
+          }
+      });
+  
+      $("#userid").keyup(function(){
+          var id = $(this).val();
+          console.log("id >> "+id);
+      
+          $.ajax({
+              url:'/signup/idDupCheck', 
+              type:'post', 
+              data:{userid: id},
+              success:function(cnt){
+                  $("#register-form").validate({
+                      rules:{
+                          userid:{
+                              idDupChk: true 
+                          }  
+                      },
+                      message: {
+                          userid:{
+                              idDupChk: "중복된 아이디입니다0" 
+                          }  
+                      },
+                      submitHandler: function(form) {
+                        form.submit();
+                      }  
+                  });
+  
+             }
+          });
+          
+      });
+  
+  
+  });
+  </script>
+  
+</body>
+
+</html>
