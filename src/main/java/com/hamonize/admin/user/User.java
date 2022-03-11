@@ -63,7 +63,7 @@ public class User extends PagingVo {
 	@Comment("비밀번호 암호화 솔트 값")
 	private String salt;
 
-	@Comment("활성 비활성 구분 값 > 1 : 활성 , 0 : 비활성")
+	@Comment("활성 비활성 구분 값 > A : 활성 , IA : 비활성")
 	private String status;
 	
 	@Column(name = "rgstr_date")

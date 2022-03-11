@@ -140,10 +140,10 @@
           <div class="col-auto my-auto">
             <div class="h-100">
               <h5 class="mb-1">
-                ${userSession.username}
+                ${user.username}
               </h5>
               <p class="mb-0 font-weight-bold text-sm">
-                ${userSession.domain}
+                ${user.domain}
               </p>
             </div>
           </div>
@@ -161,7 +161,8 @@
               <div class="card-header pb-0">
                 <div class="d-flex align-items-center">
                   <p class="mb-0">회원정보 수정 </p>
-                  <button type="submit" class="btn btn-danger btn-sm  ms-auto">수정하기</button>
+                    <a href="/user/list" class="btn btn-secondary btn-sm ms-auto">목록으로</a>
+                    <button type="submit" class="btn btn-danger btn-sm " style="margin-left:1%">수정하기</button>
                 </div>
               </div>
               <div class="card-body">
@@ -170,19 +171,19 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <label for="example-text-input" class="form-control-label">아이디</label>
-                      <input class="form-control" type="text" value="${userSession.userid}" disabled>
+                      <input class="form-control" type="text" value="${user.userid}" disabled>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="example-text-input" class="form-control-label">이름</label>
-                      <input class="form-control" id="username" name="username" type="text" value="${userSession.username}">
+                      <input class="form-control" id="username" name="username" type="text" value="${user.username}">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="example-text-input" class="form-control-label">Email</label>
-                      <input class="form-control" id="email" name="email" type="email" value="${userSession.email}" >
+                      <input class="form-control" id="email" name="email" type="email" value="${user.email}" >
                     </div>
                   </div>
                   <div class="col-md-12">

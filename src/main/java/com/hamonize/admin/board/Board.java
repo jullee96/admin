@@ -1,4 +1,4 @@
-package com.hamonize.portal.board;
+package com.hamonize.admin.board;
 
 
 public class Board {

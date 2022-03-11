@@ -77,11 +77,11 @@ function gotoUrl(url){
             </div>
             <span class="nav-link-text ms-1 text-sm">회원 리스트</span>
           </a>
-          <a class="nav-link "  href="javascript:;" onClick="gotoUrl('/user/detail')">
+          <%-- <a class="nav-link "  href="javascript:;" onClick="gotoUrl('/user/detail')">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             </div>
             <span class="nav-link-text ms-1 text-sm">회원정보 상세</span>
-          </a>
+          </a> --%>
         </li>
         <li class="nav-item">
           <%-- <a class="nav-link " href="javascript:;" onClick="gotoUrl('/user/resign')"> --%>

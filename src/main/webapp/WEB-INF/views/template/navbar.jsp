@@ -31,7 +31,7 @@
       <ul class="navbar-nav justify-content-end">
         
         <li class="nav-item dropdown pe-2 d-flex align-items-center">
-          <a href="/user/detail" class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <a href="/user/detail?userid=${userSession.userid} " class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             ${userSession.username} 님 &nbsp;&nbsp; <i class="fa fa-bell cursor-pointer">   </i>
           </a>
 
@@ -40,16 +40,12 @@
               <a class="dropdown-item border-radius-md" href="/user/detail">
                 <div class="d-flex py-1">
                   <div class="my-auto">
-                  <c:if test="${profileImg != null}" >
-                    <img src="/user/images" class="avatar avatar-sm me-3">
-                  </c:if>
-                  <c:if test="${profileImg == null}">
+                  
                     <img src="/img/user.svg" class="avatar avatar-sm me-3">  
-                  </c:if>
                   </div>
                   <div class="d-flex flex-column justify-content-center">
                     <h6 class="text-sm font-weight-normal mb-1">
-                      <span class="font-weight-bold">회원정보 수정</span> 
+                      <span class="font-weight-bold">관리자 정보 수정</span> 
                     </h6>
                     
                   </div>

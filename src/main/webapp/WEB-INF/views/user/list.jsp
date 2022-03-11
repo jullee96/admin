@@ -73,11 +73,9 @@
                         </td>
                         <td class="font-weight-bold">
                           <span class="my-2 text-xs">${list.userid}</span>
-                        </td><td class="text-xs font-weight-bold">
-                          <div class="d-flex align-items-center">
-                            <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-check" aria-hidden="true"></i></button>
-                            <span>Paid</span>
-                          </div>
+                        </td>
+                        <td class="text-xs font-weight-bold">
+                            <a href="/user/detail?userid=${list.userid}&seq=${list.seq}"><span>${list.username}</span></a>
                         </td>
                         <td class="text-xs font-weight-bold">
                           <div class="d-flex align-items-center">
@@ -87,16 +85,26 @@
                         <td class="text-xs font-weight-bold">
                           <span class="my-2 text-xs">
                             <c:if test="${list.role eq 'ROLE_GUEST'}">
-                              미인증
+                              미완료
                             </c:if>
                             <c:if test="${list.role eq 'ROLE_USER'}">
-                              인증완료
+                              완료
                             </c:if>
                           </span>
                         </td>
                         <td class="text-xs font-weight-bold">
-                          <span class="my-2 text-xs">$140,20</span>
-                        </td>
+                            <div class="d-flex align-items-center">
+                              <c:if test="${list.status == 'A'}">
+                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-check" aria-hidden="true"></i></button>
+                                <span>활성</span>
+
+                              </c:if>
+                              <c:if test="${list.status != 'A'}">
+                                <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                <span>비활성</span>
+                              </c:if>
+                            </div>                        
+                          </td>
                         <td class="text-xs font-weight-bold">
                           <span class="my-2 text-xs">${list.viewDate}</span>
                         </td>

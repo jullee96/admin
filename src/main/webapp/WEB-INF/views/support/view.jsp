@@ -58,7 +58,7 @@ img[alt=alt_img] {
         <div class="card-body p-3">
             <h5 class="font-weight-bolder">1:1 문의하기</h5>    
                 <div class="d-flex align-items-center">
-                  <a href="/support/edit?seq=${edit.seq}" class="btn btn-danger btn-sm  ms-auto ">수정하기</a>
+                <a href="/support/edit?seq=${edit.seq}" class="btn btn-danger btn-sm  ms-auto ">수정하기</a>
                 </div>
 
 

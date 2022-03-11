@@ -69,6 +69,8 @@ public class UserController {
 
         for (User el : list) {
             el.setViewDate(el.getRgstrDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            el.setStatus(el.getStatus().trim());
+            
             ulist.add(el);
             
         } 
@@ -85,12 +87,16 @@ public class UserController {
 
     @RequestMapping("/detail")
     public String signup(HttpSession session, User vo, Model model) {
-        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
+       SecurityUser user = (SecurityUser) session.getAttribute("userSession");
        logger.info("user id >>> {}",user.getUserid());
-       Company newComVo = cr.findByUserid(user.getUserid());
+       vo = ur.findByUserid(vo.getUserid()).get();
+       Company newComVo = cr.findByUserid(vo.getUserid());
+       model.addAttribute("user", vo);
        model.addAttribute("companyInfo", newComVo);
 
-       FileVO file = fr.findByUseridAndKeytype(user.getUserid(), "img");
+       logger.info("user seq >> {}", vo.getSeq());
+
+       FileVO file = fr.findByUseridAndKeytype(vo.getUserid(), "img");
         try {
             if( !"".equals(file.getFilepath().toString()) ){
                 session.setAttribute("profileImg", file.getFilepath());
