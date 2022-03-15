@@ -21,6 +21,12 @@ public interface SupportRepository extends JpaRepository<Support, String>{
     )
     int update(@Param("vo") Support vo);
 
+    @Modifying
+    @Query(
+        value = "UPDATE tbl_support SET status = :#{#vo.status} , updt_date = :#{#vo.updtdate} WHERE seq = :#{#vo.seq} " , nativeQuery = true
+    )
+    int updateStatus(@Param("vo") Support vo);
+
     @Query(
         value = "SELECT * FROM tbl_support WHERE user_id = :userid " , nativeQuery = true
     )

@@ -40,7 +40,8 @@ public interface UserRepository extends JpaRepository<User, Long>{
     
     public Boolean existsByEmail(String email);
 
-    public Page<User> findByRoleNot(org.springframework.data.domain.Pageable pageable, String role);
     public Page<User> findAll(org.springframework.data.domain.Pageable pageable);
+
+    public Page<User> findByRoleNot(org.springframework.data.domain.Pageable pageable, String string);
 
 }

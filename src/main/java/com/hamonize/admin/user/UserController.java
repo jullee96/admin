@@ -60,7 +60,7 @@ public class UserController {
                 
         // paging
         pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
-        Page<User> resultPage = ur.findByRoleNot(pageable,"USER_ADMIN");
+        Page<User> resultPage = ur.findByRoleNot(pageable,"ROLE_ADMIN");
         logger.info("resultPage getTotalPages >>>> {}", resultPage.getTotalPages());
         logger.info("resultPage nextPageable >>>> {}", resultPage.nextPageable());
 

@@ -24,6 +24,7 @@
     color: #495057;
     font-size: 0.875rem;
     border-radius: 0.5rem;
+    margin-left:10px;
 }
 
 .sub-title{
@@ -33,15 +34,19 @@
 img[alt=alt_img] { 
     width: 500px; 
 }
-
+.btn-status{
+    padding: 0.5rem 1rem;
+    margin-left:10px; 
+}
 
 </style>
 
 
 <body class="g-sidenav-show bg-gray-100">
   <input type="hidden" id="pageTitle" value="기술지원 관리">
-  <input type="hidden" id="pageSubTitle" value="기술지원 신청">
-
+  <input type="hidden" id="pageSubTitle" value="기술지원 답변하기">
+  <input type="hidden" id="supportseq" value="${edit.seq}">
+                    
   <div class="position-absolute w-100 min-height-300 top-0" >
     <span class="mask bg-warning opacity-6"></span>
   </div>
@@ -53,78 +58,288 @@ img[alt=alt_img] {
     <%@ include file="../template/navbar.jsp" %>
     <!-- End Navbar -->
 
-<form id="support-form" name="support-form" >
-    <div class="card shadow-lg mx-4 card-profile-bottom">
-        <div class="card-body p-3">
-            <h5 class="font-weight-bolder">1:1 문의하기</h5>    
-                <div class="d-flex align-items-center">
-                <a href="/support/edit?seq=${edit.seq}" class="btn btn-danger btn-sm  ms-auto ">수정하기</a>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-12">
-                        <label class="sub-title" >문의 종류</label>
-
-                        <input type="hidden" id="select_type" value="${edit.type}" >
-                        <select class="form-control" name="type" id="type" disabled focused>
-                            <option value="" disabled selected hidden>선택해주세요</option>
-                            <option value="P" >결제문의</option>
-                            <option value="T">기술문의</option>
-                            <option value="E">기타</option>
-                        </select>
-                    </div>
-
-                    <div class="col-12 col-sm-6 mt-3 mt-sm-0">
-                        <label class="text-md-start">담당자</label>
-                        <input class="form-control" type="text" id="name" name="name" value="${userSession.username}" disabled >
-                    </div>
-
-                    <div class="col-12 col-sm-6 mt-3 mt-sm-0">
-                        <label class="text-md-start">이메일</label>
-                        <input class="form-control" type="email" id="email" name="email" value="${userSession.email}" disabled>
-
-                    </div>
-
-                    <div class="col-12">
-                        <label class="text-md-start">제목</label>
-                        <input class="form-control" type="text" id="title" name="title" value="${edit.title}" disabled>
-                    </div>
-
-                    <div class="col-sm-12">
-                    <label class="mt-4">내용</label>
-                    <div class="contents" id ="viewer"> ${edit.contents}</div>
-                    <div id="contents"></div>
+    <form id="support-form" class="mb-4 " name="support-form" >
+        <div class="card shadow-lg mx-4 card-profile-bottom">
+            <!-- 문의 -->
+            <div class="card-body p-3">
+                <h5 class="font-weight-bolder">문의 상세 
                     
-                </div>
+                    <c:if test="${clistSize != 0}">
+                        <button type="button" class="mt-2 btn btn-outline-secondary btn-status"> 답변완료</button>  
+                    </c:if>
+                    <c:if test="${clistSize == 0}">
+                        <button type="button" class="mt-2 btn btn-outline-success btn-status"> 처리중</button>  
+                    </c:if>
+                </h5> 
+                    
+                     <hr>  
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mt-3 mt-sm-2">
+                            <label class="h6 text-md-start">문의 번호</label>
+                            <input class="form-control" type="text" id="seq" name="seq" value="${edit.seq}" disabled>
 
+                        </div>
+                        <div class="col-12 col-sm-6 ">
+                            <label class="h6 sub-title " >문의 종류</label>
+                            <input type="hidden" id="select_type" value="${edit.type}" >
+                            <select class="form-control" name="type" id="type" disabled focused>
+                                <option value="" disabled selected hidden>선택해주세요</option>
+                                <option value="P" >결제문의</option>
+                                <option value="T">기술문의</option>
+                                <option value="E">기타</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-sm-6 mt-3 mt-sm-4">
+                            <label class="h6 text-md-start">신청일</label>
+                            <input class="form-control" type="text" id="name" name="name" value="${edit.viewDate}" disabled >
+                        </div>    
+                        <div class="col-12 col-sm-6 mt-3 mt-sm-4">
+                            <label class="h6 text-md-start">유저 아이디</label>
+                            <input class="form-control" type="text" id="name" name="name" value="${edit.userid}" disabled >
+                        </div>
+
+
+                        <div class="col-12 mt-sm-4">
+                            <label class="h6 text-md-start">제목</label>
+                            <div class="contents">${edit.title}</div>
+                            
+                        </div>
+
+                        <div class="col-sm-12 ">
+                        <label class="h6 mt-4">내용</label>
+                        <div class="contents" id ="viewer"> ${edit.contents}</div>
+                        <div id="contents"></div>
+                        <hr>
+                    </div>
+
+            </div>
+        <div class="d-flex align-items-left">
+            <a href="/support/list" class="me-4 btn btn-secondary btn-sm  ms-auto ">목록으로</a>
+            <button type="button" class=" btn btn-danger btn-sm" onClick="fnShowEiditor('new','')" >답변하기</button>
+            
         </div>
 
-    </div>
-  
-  </div>
-</form>
+        </div>
+        
+
+        <!-- 답변 -->
+        <c:forEach items="${clist}" var="list" varStatus="status" >
+            <c:if test="${list.seq != null}" >
+            <div class="card mt-2 mb-4 shadow-lg mx-4 card-profile-bottom" style="background-color:#63b3ed1c;">
+                <div class="card-body p-3" >  
+                    <h6 class="font-weight-bolder">ㄴ ${list.userid}</h6>
+                    <div class="contents" id ="viewer2"> ${list.comment}</div>
+                    ${list.viewDate}
+                    <a href="javascript:fnShowEiditor('edit','${list.seq}','${list.comment}' );" style="margin-left:92%;" >${list.seq} [수정]</a> | 
+                    <a href="/support/deleteComment?seq=${list.seq}" >[삭제]</a>
+
+                </div>
+            </div>
+
+            </c:if>
+        </c:forEach>
+     </div>
+        <div id="div-editor" style="display:none;" class="card mt-5 shadow-lg mx-4 card-profile-bottom">
+            <div class="card-body p-3">  
+                <h5 class="font-weight-bolder">답변하기</h5>
+                    <div class="d-flex align-items-center">
+                        <button id="btnSave" type="button" onClick="fnSaveComment('save')" class="btn btn-danger btn-sm  ms-auto ">저장</button>
+                        <button id="btnEdit" type="button" onClick="fnSaveComment('edit')" class="btn btn-warning btn-sm  ms-auto" style="display:none;" >수정</button>
+                    </div>
+    
+                <div class="contents" id ="editor"></div>
+                <div id="comments"></div>    
+            </div>
+        </div>
+
+    </form>
   
 </body>
 
 <%@ include file="../template/core.jsp" %>
+<script>
+    $(document).ready(function () {
+    const select_type = $("#select_type").val();
+
+    $("#type").val(select_type);  
+
+    });
+</script>
+
 <script class="code-js">
 
-const Editor = toastui.Editor;
-const editor = new Editor({ 
+const Viewer = toastui.Editor;
+const viewer = new Viewer({ 
     el: document.querySelector('#viewer'), 
     height: '500px', 
     initialValue: content   
 });
 
+
+
+const Viewer2 = toastui.Editor;
+const viewer2 = new Viewer2({ 
+    el: document.querySelector('#viewer2'), 
+    height: '500px', 
+    initialValue: content   
+});
+
 </script>
+
+<script class="code-js">
+
+const Editor = toastui.Editor;
+const editor = new Editor({ 
+    el: document.querySelector('#editor'), 
+    height: '300px', 
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical',
+    customHTMLRenderer: {
+    htmlBlock: {
+        iframe(node) {
+                return [
+                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+                { type: 'html', content: node.childrenHTML },
+                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+                ];
+            },
+        }
+    },
+    hooks:{
+        addImageBlobHook: (blob, callback) => {
+            const img_url = uploadImage(blob);
+            callback(img_url.split("uploads")[1] , 'alt_img');
+        }    
+    }
+    
+});
+
+ console.log(editor.getHTML());
+    
+
+function uploadImage(blob){
+    let url;
+
+    let filename = new Date().getTime() + ".png";
+    let InputFiles = new File([blob], filename, {
+        type: "image/png",
+        lastModified: Date.now()
+    });
+
+    const keytype ="comment";
+
+    if(InputFiles == null ){
+        alert("파일을 선택해주세요");
+        return;
+    }
+  
+    var formData = new FormData();
+
+    formData.append("keyfile", InputFiles);
+    formData.append("keytype", keytype);
+    
+    $.ajax({
+        type:"POST",
+        url: "/file/upload",
+        processData: false,
+        contentType: false,
+        data: formData,
+        async:false,
+        success: function(retval){
+            if(retval != "F"){
+                console.log("업로드 성공" +retval);
+               
+            } else{
+                console.log("업로드 실패");
+            }
+            url = retval;
+        }
+    });
+
+    return url;
+}
+
+</script>
+
 <script>
 
-$(document).ready(function () {
-  const select_type = $("#select_type").val();
+var c_seq;
 
-  $("#type").val(select_type);  
+function fnShowEiditor(type, seq, comment){
+    console.log("type : "+type);
+    console.log("seq : "+seq);
+    c_seq = seq;
+    console.log("comment : "+comment);
+    if($('#div-editor').css('display') == 'none'){
+        if(type == "edit"){
+            $(".ProseMirror > p").remove();
+            $(".ProseMirror").append(comment);
 
-});
+}
+        $('#div-editor').show();
+        $('#div-editor')[0].scrollIntoView();
+
+    }else{
+        $(".ProseMirror > p").remove();
+        $('#div-editor').hide();
+
+    }
+}
+
+
+function fnSaveComment(type){
+    // const seq =
+    const supportseq = $("#supportseq").val(); 
+    const comment = editor.getHTML();
+    alert("c_seq : "+c_seq);
+    if(type="save"){
+        $.ajax( { 
+            url : "/support/save",
+            type:"POST",
+            data : {
+                    supportseq : supportseq,
+                    comment : comment,
+                },
+            success : function(seq) {
+                if(seq > 0){
+                    alert( "success" );
+                } else{
+                    alert( "fail" );
+                }
+
+                location.href="/support/list";
+
+            }, error : function(e) {
+                alert( "fail" );
+            }
+        });
+    }else if(type="edit"){
+        $.ajax( { 
+            url : "/support/edit",
+            type:"POST",
+            data : {
+                    seq : c_seq,
+                    supportseq : supportseq,
+                    comment : comment,
+                },
+            success : function(seq) {
+                if(seq > 0){
+                    alert( "success" );
+                } else{
+                    alert( "fail" );
+                }
+
+                location.href="/support/list";
+
+            }, error : function(e) {
+                alert( "fail" );
+            }
+        });
+    }
+
+}
+
 </script>
+
+
 </html>

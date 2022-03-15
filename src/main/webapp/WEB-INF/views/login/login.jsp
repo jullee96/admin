@@ -52,31 +52,7 @@
                   </form> 
                 </div>
                 
-              <!-- sns login -->
-              <%-- <div class="row px-xl-5 px-sm-4 px-3">
-                <div class="mt-2 mb-4 position-relative text-center">
-                  <p class="text-sm font-weight-bold mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
-                     or 
-                  </p>
-              </div>
-                
-                <div class="col-3 ms-auto px-1">
-                  <a style="width:65.19px;height:54px;" class="btn btn-outline-light w-80" href="/oauth2/authorization/kakao">
-                    <img style="width:32px;height:32px;margin-left:-4px;" src="/img/kakao.png">
-                  </a>
-                </div>
-                <div class="col-3 px-1">
-                  <a style="width:65.19px;height:54px;" class="btn btn-outline-light w-80" href="/oauth2/authorization/naver">
-                    <img style="width:34px;height:34px;margin-left:-5px;" src="/img/naver.png">
-                  </a>
-                </div>
-                <div class="col-3 me-auto px-1">
-                
-                  <a style="width:65.19px;height:54px;" class="btn btn-outline-light w-80" href="/oauth2/authorization/google">
-                    <img style="width:30px;height:30px;margin-left:-4px;" src="/img/google.png">  
-                  </a>
-                </div> --%>
-                
+   
               </div>
 
 

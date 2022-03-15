@@ -122,7 +122,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             user.setUsername(attributes.getName());
             user.setEmail(attributes.getEmail());
             user.setPicture(attributes.getPicture());
-            user.setRole("ROLE_USER");
+            user.setRole("ROLE_ADMIN");
             user.setRgstrDate(LocalDateTime.now());
             user.setPasswd("");
 

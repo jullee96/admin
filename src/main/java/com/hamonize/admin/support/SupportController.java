@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -40,28 +41,27 @@ public class SupportController {
     @Autowired
     SupportRepository sr;
 
+    @Autowired
+    CommentsRespository cr;
+
     @RequestMapping("/list")
     public String supportList(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,  HttpSession session, Support vo, Model model) {
         logger.info("\n\n\n <<< list >> page : {}", page);
-        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
-
         
         // paging
         pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
-        Page<Support> resultPage = sr.findAllByUserid(pageable, user.getUserid());
-        logger.info("resultPage getTotalPages >>>> {}", resultPage.getTotalPages());
-        logger.info("resultPage nextPageable >>>> {}", resultPage.nextPageable());
-
+        Page<Support> resultPage = sr.findAll(pageable);
         List<Support> list = resultPage.getContent();
         List<Support> slist = new ArrayList<>();
 
         for (Support support : list) {
             support.setStatus(support.getStatus().trim());
             support.setType(support.getType().trim());
-            support.setViewDate(support.getInsdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
             slist.add(support);
             
         } 
+        
         model.addAttribute("list", slist);
         model.addAttribute("nowPage", page);
         model.addAttribute("totalPage", resultPage.getTotalPages());
@@ -69,66 +69,65 @@ public class SupportController {
         return "/support/list";
 	}
 
-    @GetMapping("/apply")
-    public String supportCreate(Support vo, HttpSession session, Model model) {
-        
-        logger.info("\n\n\n <<< 1:1문의 작성 >> ");
-        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
-      
-        return "/support/apply";
-	}
 
     @GetMapping("/edit")
-    public String supportEdit(Support vo, HttpSession session, Model model) {
-        logger.info("seq : ",vo.getSeq());
-
+    @ResponseBody
+    public int supportEdit(Support svo, Comments vo, Model model) {
         logger.info("\n\n\n <<< 1:1문의 상세 수정 >> ");
-        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
         logger.info("seq >> {}", vo.getSeq());
-        Support edit = sr.findBySeq(vo.getSeq());
-            
-        model.addAttribute("edit", edit);
-    
-        return "/support/apply";
+        int ret = cr.update(vo);            
+        return ret;
+        // return "/support/apply";
 	}
 
     @GetMapping("/view")
     public String supportView(Support vo, HttpSession session, Model model) {
-        logger.info("seq : ",vo.getSeq());
+        List <Comments> list = cr.findAllBySupportseq(vo.getSeq());
 
-        logger.info("\n\n\n <<< 1:1문의 상세 보기>> ");
-        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
-            logger.info("seq >> {}", vo.getSeq());
-            Support edit = sr.findBySeq(vo.getSeq());
-                
-            model.addAttribute("edit", edit);
-    
+        for (Comments cm : list) {
+            cm.setViewDate(cm.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+        }
+
+        logger.info("seq >> {}", vo.getSeq());
+        Support edit = sr.findBySeq(vo.getSeq());
+
+        edit.setViewDate(edit.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+        logger.info("list length : {}", list.size());
+        model.addAttribute("edit", edit);
+        model.addAttribute("clist", list);
+        model.addAttribute("clistSize", list.size());
+
         return "/support/view";
 	}
 
     @RequestMapping("/save")
     @ResponseBody
-    public Long save(HttpSession session, Support vo ) {
-        logger.info("\n\n\n <<< support 저장 >> ");
-        Support ret = new Support();
+    public Long save(HttpSession session, Support pvo,Comments vo ) {
+        logger.info("\n\n\n <<< support 코멘트 저장 >> ");
+        Comments ret = new Comments();
         Long retval = (long) 0;
         SecurityUser user = (SecurityUser) session.getAttribute("userSession");
         
         vo.setUserid(user.getUserid());
-        logger.info("getSeq >> {}",vo.getSeq());
+        logger.info("getSupportseq >> {}",vo.getSupportseq());
+        pvo.setSeq(vo.getSupportseq());
         
-        if(vo.getSeq() != null ){
+        if(vo.getSeq() != null ){ // 코멘트 수정
             vo.setUpdtdate(LocalDateTime.now());
-            int aa = sr.update(vo);
+            int aa = cr.update(vo);
             retval = (long) aa;
 
             logger.info("update >>>{} ", retval);
             
-        } else{
+        } else{ // 코멘트 저장
             logger.info("save >>> ");
-            vo.setStatus("P");
-            vo.setInsdate(LocalDateTime.now());
-            ret = sr.save(vo);
+            pvo.setStatus("D"); // 상태값 변경 처리중 -> 완료
+            pvo.setUpdtdate(LocalDateTime.now()); // 상태값 변경 처리중 -> 완료
+            sr.updateStatus(pvo);
+
+            vo.setRgstrdate(LocalDateTime.now());
+            ret = cr.save(vo);
+
             retval = ret.getSeq();
         }
         
@@ -144,7 +143,34 @@ public class SupportController {
         SecurityUser user = (SecurityUser) session.getAttribute("userSession");
         sr.delete(vo);
 
+
         return "redirect:/support/list";
+	}
+
+
+    @RequestMapping("/deleteComment")
+    public String deleteComment(HttpSession session, Comments vo, Support svo ) throws Exception{
+        logger.info("comment seq : {}",vo.getSeq());
+        Comments tmp = cr.findBySeq(vo.getSeq());
+        Long sseq =tmp.getSupportseq();
+        String returl = "redirect:/support/view?seq="+tmp.getSupportseq();
+        
+        logger.info("tmp >> s_seq : {}", tmp.getSupportseq());
+        logger.info("\n\n\n <<< doamin 결제 페이지 >> ");
+       
+        cr.delete(vo);
+        logger.info("cr.existsBySupportseq(sseq) : {}", cr.existsBySupportseq(sseq));
+        if(!cr.existsBySupportseq(sseq) ){// 답변이 아예없음 > 처리중 상태로변경
+            svo.setSeq(sseq);
+            svo.setStatus("P");
+            svo.setUpdtdate(LocalDateTime.now());
+            
+            sr.updateStatus(svo);
+        }
+
+
+        logger.info("returl : {}", returl);
+        return returl;
 	}
 
     @RequestMapping("/getImageUrl")

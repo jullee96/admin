@@ -118,7 +118,7 @@ public class SignupController {
             // update email authKey && role
             vo.setEmail(map.get("email").trim());
             vo.setAuthkey(map.get("authkey").trim());    
-            vo.setRole("ROLE_USER");
+            vo.setRole("ROLE_ADMIN");
             int ret = sr.updateAuthkey(map.get("email").trim(),"A",vo.getRole());
             logger.info("ret {}", ret);
         } catch (Exception e) {
