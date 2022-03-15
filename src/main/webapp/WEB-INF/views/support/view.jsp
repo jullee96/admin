@@ -114,8 +114,8 @@ img[alt=alt_img] {
 
             </div>
         <div class="d-flex align-items-left">
-            <a href="/support/list" class="me-4 btn btn-secondary btn-sm  ms-auto ">목록으로</a>
-            <button type="button" class=" btn btn-danger btn-sm" onClick="fnShowEiditor('new','')" >답변하기</button>
+            <a id="gotoList" href="/support/list" class="me-4 btn btn-secondary btn-sm  ms-auto ">목록으로</a>
+            <button id="gotoEditor" type="button" class=" btn btn-danger btn-sm" onClick="fnShowEiditor('new','')" >답변하기</button>
             
         </div>
 
@@ -130,7 +130,7 @@ img[alt=alt_img] {
                     <h6 class="font-weight-bolder">ㄴ ${list.userid}</h6>
                     <div class="contents" id ="viewer2"> ${list.comment}</div>
                     ${list.viewDate}
-                    <a href="javascript:fnShowEiditor('edit','${list.seq}','${list.comment}' );" style="margin-left:92%;" >${list.seq} [수정]</a> | 
+                    <a href="javascript:fnShowEiditor('edit','${list.seq}','${list.comment}');" style="margin-left:92%;" >[수정]</a> | 
                     <a href="/support/deleteComment?seq=${list.seq}" >[삭제]</a>
 
                 </div>
@@ -143,8 +143,10 @@ img[alt=alt_img] {
             <div class="card-body p-3">  
                 <h5 class="font-weight-bolder">답변하기</h5>
                     <div class="d-flex align-items-center">
-                        <button id="btnSave" type="button" onClick="fnSaveComment('save')" class="btn btn-danger btn-sm  ms-auto ">저장</button>
-                        <button id="btnEdit" type="button" onClick="fnSaveComment('edit')" class="btn btn-warning btn-sm  ms-auto" style="display:none;" >수정</button>
+                        <button id="btnClose" type="button" onClick="fnClose()" class="btn btn-secondary btn-sm me-4 ms-auto" >닫기</button>
+
+                        <button id="btnSave" type="button" onClick="fnSaveComment('save')" class="btn btn-danger btn-sm " >저장</button>
+                        <button id="btnEdit" type="button" onClick="fnSaveComment('edit')" class="btn btn-warning btn-sm " style="display:none;" >수정</button>
                     </div>
     
                 <div class="contents" id ="editor"></div>
@@ -265,24 +267,43 @@ function uploadImage(blob){
 
 var c_seq;
 
+function fnClose(){
+    $(".ProseMirror > p").remove();
+    $('#div-editor').hide();
+    $("#gotoList").show();
+    $("#gotoEditor").show();
+
+
+}
+
 function fnShowEiditor(type, seq, comment){
     console.log("type : "+type);
     console.log("seq : "+seq);
     c_seq = seq;
+    
     console.log("comment : "+comment);
     if($('#div-editor').css('display') == 'none'){
-        if(type == "edit"){
-            $(".ProseMirror > p").remove();
-            $(".ProseMirror").append(comment);
+        $("#gotoList").hide();
+        $("#gotoEditor").hide();
 
-}
         $('#div-editor').show();
         $('#div-editor')[0].scrollIntoView();
 
-    }else{
-        $(".ProseMirror > p").remove();
-        $('#div-editor').hide();
+        if(type == "edit"){
+            if($('#btnEdit').css('display') == 'none'){
+                $("#btnEdit").show();
+                $("#btnSave").hide();
 
+            }
+
+            $(".ProseMirror > p").remove();
+            $(".ProseMirror").append(comment);
+        } else if(type =="new"){
+            $("#btnSave").show();
+            $("#btnEdit").hide();
+        }
+
+        
     }
 }
 
@@ -292,7 +313,7 @@ function fnSaveComment(type){
     const supportseq = $("#supportseq").val(); 
     const comment = editor.getHTML();
     alert("c_seq : "+c_seq);
-    if(type="save"){
+    if(type=="save"){
         $.ajax( { 
             url : "/support/save",
             type:"POST",
@@ -313,7 +334,7 @@ function fnSaveComment(type){
                 alert( "fail" );
             }
         });
-    }else if(type="edit"){
+    }else if(type=="edit"){
         $.ajax( { 
             url : "/support/edit",
             type:"POST",
