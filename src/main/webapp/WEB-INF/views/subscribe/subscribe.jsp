@@ -11,8 +11,8 @@
      Hamonize Cloud Service | Subscribe
   </title>
   <script type="text/javascript" src="/subscribe/payment.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js"></script>
-
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js"></script>  
+  <script src="../argon/assets/js/plugins/multistep-form.js"></script>
   <link href="/subscribe/style.css" rel="stylesheet">
 
 </head>

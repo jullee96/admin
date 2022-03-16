@@ -11,10 +11,6 @@
     Hamonize Cloud Service | Subscribe
   </title>
 
-  <%-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> --%>
-  
-  <%-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>  --%>
-  <%-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js"></script> --%>
   <link href="/subscribe/style.css" rel="stylesheet">
   <script type="text/javascript" src="/subscribe/payment.js"></script>
 

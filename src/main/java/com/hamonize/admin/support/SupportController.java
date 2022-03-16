@@ -2,6 +2,7 @@ package com.hamonize.admin.support;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -66,15 +68,153 @@ public class SupportController {
         model.addAttribute("nowPage", page);
         model.addAttribute("totalPage", resultPage.getTotalPages());
 
+        
         return "/support/list";
 	}
 
 
-    @GetMapping("/edit")
+    @RequestMapping("/search")
+    public String supportListSearch(String keyword, @RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,  HttpSession session, Support vo, Model model) {
+        logger.info("\n\n\n <<< list >> page : {}", page);
+        logger.info("keyword : {}", keyword);
+        
+        
+        try {
+            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
+    
+            if( keyword.matches("[0-9]+") ){ //숫자만 있는 경우
+                Long tmpLong = Long.parseLong(keyword);
+                logger.info("tmpLong : {}", tmpLong);
+                logger.info("tmpLong type : {}", tmpLong.getClass());
+
+                Page<Support> resultPage = sr.findBySeq(pageable, tmpLong);
+                List<Support> list = resultPage.getContent();
+                List<Support> slist = new ArrayList<>();
+                
+                for (Support support : list) {
+                    support.setStatus(support.getStatus().trim());
+                    support.setType(support.getType().trim());
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                    slist.add(support);
+                } 
+        
+                // paging
+                model.addAttribute("list", slist);
+                model.addAttribute("nowPage", page);
+                model.addAttribute("totalPage", resultPage.getTotalPages());
+          
+                
+            } else{ //문자만 있는 경우
+                Page<Support> resultPage = sr.findByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(pageable, keyword, keyword);
+                List<Support> list = resultPage.getContent();
+                List<Support> slist = new ArrayList<>();
+                
+                for (Support support : list) {
+                    support.setStatus(support.getStatus().trim());
+                    support.setType(support.getType().trim());
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                    slist.add(support);
+                } 
+        
+                // paging
+                model.addAttribute("list", slist);
+                model.addAttribute("nowPage", page);
+                model.addAttribute("totalPage", resultPage.getTotalPages());
+            
+            }
+
+
+
+        } catch (Exception e) {
+            logger.error("[ERROR] string to long...{}", e);
+        }
+        
+        return "/support/list";
+	}
+
+    @RequestMapping("/searchDate")
+    public String supportListSearchDate(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,  HttpSession session, Support vo, Model model) {
+        logger.info("\n\n\n <<< list >> page : {}", page);
+        logger.info("start : {}", vo.getStartDate());
+        logger.info("end : {}", vo.getEndDate());
+        
+         
+        try {
+            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            
+            logger.info("endDate: {}", vo.getEndDate());
+            logger.info("endDate + 1: {}", vo.getEndDate()+1);
+
+
+            if(vo.getStartDate() != null){
+                LocalDateTime startDate = LocalDate.parse(vo.getStartDate(), formatter).atStartOfDay();
+                LocalDateTime endDate = LocalDate.parse(vo.getEndDate(), formatter).atStartOfDay();
+                endDate = endDate.plusHours(23).plusMinutes(59).plusSeconds(60);
+                
+                logger.info("endDate  >> {}", endDate);
+                
+                Page<Support> resultPage = sr.findAllByRgstrdateBetween(pageable, startDate, endDate);
+                List<Support> list = resultPage.getContent();
+                List<Support> slist = new ArrayList<>();
+                
+                for (Support support : list) {
+                    support.setStatus(support.getStatus().trim());
+                    support.setType(support.getType().trim());
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                    slist.add(support);
+                } 
+                    
+                // paging
+                model.addAttribute("list", slist);
+                model.addAttribute("nowPage", page);
+                model.addAttribute("totalPage", resultPage.getTotalPages());
+            
+                model.addAttribute("startDate", vo.getStartDate());
+                model.addAttribute("endDate", vo.getEndDate());
+        
+            } else{
+                LocalDateTime endDate = LocalDate.parse(vo.getEndDate(), formatter).atStartOfDay();
+                endDate = endDate.plusHours(23).plusMinutes(59).plusSeconds(60);
+                
+                Page<Support> resultPage = sr.findAllByRgstrdateLessThanEqual(pageable, endDate);
+                List<Support> list = resultPage.getContent();
+                List<Support> slist = new ArrayList<>();
+
+                for (Support support : list) {
+                    support.setStatus(support.getStatus().trim());
+                    support.setType(support.getType().trim());
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                    slist.add(support);
+                }
+                    
+                // paging
+                model.addAttribute("list", slist);
+                model.addAttribute("nowPage", page);
+                model.addAttribute("totalPage", resultPage.getTotalPages());
+                model.addAttribute("endDate", vo.getEndDate());
+        
+            }
+            
+
+        } catch (Exception e) {
+            logger.error("[ERROR] string to long...{}", e);
+        }
+        
+        return "/support/list";
+	}
+
+
+
+
+
+    @PostMapping("/edit")
     @ResponseBody
     public int supportEdit(Support svo, Comments vo, Model model) {
         logger.info("\n\n\n <<< 1:1문의 상세 수정 >> ");
         logger.info("seq >> {}", vo.getSeq());
+        vo.setUpdtdate(LocalDateTime.now());
+
         int ret = cr.update(vo);            
         return ret;
         // return "/support/apply";

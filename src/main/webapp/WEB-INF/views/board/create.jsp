@@ -9,10 +9,6 @@
   <title>
     Hamonize Cloud Service | Support Apply
   </title>
-<%-- <script src="http://code.jquery.com/jquery.min.js"></script> --%>
- 
-
-<%-- <script src="jquery.js"></script> --%>
 <script src="src/main/resources/static/tree.jquery.js"></script>
 <link rel="stylesheet" href="/jqtree.css"/>
 

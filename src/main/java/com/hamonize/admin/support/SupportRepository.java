@@ -1,9 +1,9 @@
 package com.hamonize.admin.support;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,4 +34,23 @@ public interface SupportRepository extends JpaRepository<Support, String>{
 
     Page<Support> findAllByUserid(org.springframework.data.domain.Pageable pageable, String userid);
 
+    Page<Support> findByTitleContaining(org.springframework.data.domain.Pageable pageable, String keyword);
+
+    List<Support> findByTitleContaining(String keyword);
+
+    
+    Page<Support> findByTitleContainingOrUseridContainingOrSeqContaining(org.springframework.data.domain.Pageable pageable, String keyword,
+            String keyword2, Long keyword3);
+
+    Page<Support> findByTitleContainingOrUseridContaining(org.springframework.data.domain.Pageable pageable, String keyword, String keyword2);
+
+    Page<Support> findBySeq(org.springframework.data.domain.Pageable pageable, Long tmpLong);
+
+    Page<Support> findByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(org.springframework.data.domain.Pageable pageable, String keyword,
+            String keyword2);
+
+    Page<Support> findAllByRgstrdateBetween(org.springframework.data.domain.Pageable pageable, LocalDateTime startDate, LocalDateTime endDate);
+
+    Page<Support> findAllByRgstrdateLessThanEqual(org.springframework.data.domain.Pageable pageable, LocalDateTime endDate);
+    
 }

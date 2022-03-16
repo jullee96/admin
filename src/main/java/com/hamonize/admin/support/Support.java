@@ -73,6 +73,12 @@ public class Support {
     @Transient
     private String viewDate;
 
+    @Transient
+    private String startDate;
+
+    @Transient
+    private String endDate;
+
     // @Comment("게시글 코멘트")
 	// @OneToMany
     // @JoinColumn(name = "seq")

@@ -130,9 +130,9 @@ img[alt=alt_img] {
                     <h6 class="font-weight-bolder">ㄴ ${list.userid}</h6>
                     <div class="contents" id ="viewer2"> ${list.comment}</div>
                     ${list.viewDate}
-                    <a href="javascript:fnShowEiditor('edit','${list.seq}','${list.comment}');" style="margin-left:92%;" >[수정]</a> | 
+                    <a style="margin-left:92%;" href="javascript:fnShowEiditor('edit','${list.seq}');" >[수정]</a> | 
                     <a href="/support/deleteComment?seq=${list.seq}" >[삭제]</a>
-
+                    <input id="cmt_${list.seq}" type="hidden" value='${list.comment}'>
                 </div>
             </div>
 
@@ -276,11 +276,13 @@ function fnClose(){
 
 }
 
-function fnShowEiditor(type, seq, comment){
-    console.log("type : "+type);
+function fnShowEiditor(type, seq){
     console.log("seq : "+seq);
-    c_seq = seq;
     
+    console.log("type : "+type);
+    c_seq = seq;
+    const comment = $("#cmt_"+seq).val();
+
     console.log("comment : "+comment);
     if($('#div-editor').css('display') == 'none'){
         $("#gotoList").hide();
@@ -312,8 +314,10 @@ function fnSaveComment(type){
     // const seq =
     const supportseq = $("#supportseq").val(); 
     const comment = editor.getHTML();
+    console.log("type >> "+type);
     alert("c_seq : "+c_seq);
-    if(type=="save"){
+    
+    if(type == "save"){
         $.ajax( { 
             url : "/support/save",
             type:"POST",
@@ -334,7 +338,8 @@ function fnSaveComment(type){
                 alert( "fail" );
             }
         });
-    }else if(type=="edit"){
+
+    }else if(type == "edit"){
         $.ajax( { 
             url : "/support/edit",
             type:"POST",
