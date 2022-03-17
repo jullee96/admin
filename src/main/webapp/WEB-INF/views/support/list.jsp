@@ -32,7 +32,10 @@
     position: relative;
     left: -29px;
 }
-
+.reset-btn{
+    position: relative;
+    left: -19px;
+}
 .filter-btn{
     position: relative;
     left: 75px;
@@ -92,6 +95,7 @@
                         
                     </div>
                     <div class="dataTable-search ">
+                        <a class="reset-btn " href="/support/list"><span class="text-xs me-2">검색 초기화</span> <i class="fas fa-undo"></i></a>
                         <input class="dataTable-input2" placeholder="검색" name="keyword" id="keyword" value="${keyword}" type="text" maxlength="30">
                         <a class="search-btn" href="javascript:fnSearch();"><i class="fas fa-search"></i></a>
                     </div>
