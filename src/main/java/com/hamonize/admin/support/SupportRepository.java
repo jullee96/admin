@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,5 +53,19 @@ public interface SupportRepository extends JpaRepository<Support, String>{
     Page<Support> findAllByRgstrdateBetween(org.springframework.data.domain.Pageable pageable, LocalDateTime startDate, LocalDateTime endDate);
 
     Page<Support> findAllByRgstrdateLessThanEqual(org.springframework.data.domain.Pageable pageable, LocalDateTime endDate);
+
+    Page<Support> findByStatus(org.springframework.data.domain.Pageable pageable, String status);
+
+    Long countByRgstrdateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    Long countBySeq(Long tmpLong);
+
+    Long countByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(String keyword, String keyword2);
+
+    Page<Support> findAllByTitleContainingIgnoreCaseOrUseridContainingIgnoreCaseAndRgstrdateBetween(org.springframework.data.domain.Pageable pageable,
+            String keyword, String keyword2, LocalDateTime startDate, LocalDateTime endDate);
+
+    Long countByTitleContainingIgnoreCaseOrUseridContainingIgnoreCaseAndRgstrdateBetween(String keyword,
+            String keyword2, LocalDateTime startDate, LocalDateTime endDate);
     
 }

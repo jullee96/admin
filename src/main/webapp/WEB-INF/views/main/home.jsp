@@ -61,7 +61,7 @@
         <div
             class="container flex items-center justify-center h-full max-w-6xl px-8 mx-auto sm:justify-between xl:px-0">
 
-            <a href="/" class="relative flex items-center inline-block h-5 h-full font-black leading-none">
+            <a href="/main" class="relative flex items-center inline-block h-5 h-full font-black leading-none">
                 <%-- <img class="w-auto h-6 text-indigo-600 fill-current"  src="/img/lo.png"> --%>
                 <span class="ml-3 text-xl text-gray-800">HAMONIZE<span class="text-pink-500"></span></span>
             </a>
@@ -633,7 +633,7 @@
     <footer class="px-4 pt-12 pb-8 text-white bg-white border-t border-gray-200">
         <div class="container flex flex-col justify-between max-w-6xl px-4 mx-auto overflow-hidden lg:flex-row">
             <div class="w-full pl-12 mr-4 text-left lg:w-1/4 sm:text-center sm:pl-0 lg:text-left">
-                <a href="/" class="flex justify-start block text-left sm:text-center lg:text-left sm:justify-center lg:justify-start">
+                <a href="/main" class="flex justify-start block text-left sm:text-center lg:text-left sm:justify-center lg:justify-start">
                     <span class="flex items-start sm:items-center">
                      <%-- <img src="/img/ivs_logo.png"> --%>
                     </span>

@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -47,24 +46,31 @@ public class SupportController {
     CommentsRespository cr;
 
     @RequestMapping("/list")
-    public String supportList(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,  HttpSession session, Support vo, Model model) {
-        logger.info("\n\n\n <<< list >> page : {}", page);
-        
+    public String supportList(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,HttpSession session, Support vo, Model model) {
+        logger.info("\n\n\n<<< list >> page : {}", page);
+        logger.info("getStartDate : {}", vo.getStartDate());
+        logger.info("getEndDate : {}", vo.getEndDate());
+
+
         // paging
         pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
         Page<Support> resultPage = sr.findAll(pageable);
         List<Support> list = resultPage.getContent();
         List<Support> slist = new ArrayList<>();
-
+        Long totalCnt = sr.count();
+        
         for (Support support : list) {
             support.setStatus(support.getStatus().trim());
             support.setType(support.getType().trim());
-            support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
             slist.add(support);
             
         } 
         
         model.addAttribute("list", slist);
+        model.addAttribute("totalCnt", totalCnt);
+        model.addAttribute("tmpCnt", slist.size());
+
         model.addAttribute("nowPage", page);
         model.addAttribute("totalPage", resultPage.getTotalPages());
 
@@ -77,76 +83,117 @@ public class SupportController {
     public String supportListSearch(String keyword, @RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,  HttpSession session, Support vo, Model model) {
         logger.info("\n\n\n <<< list >> page : {}", page);
         logger.info("keyword : {}", keyword);
-        
+        logger.info("getStartDate : {}", vo.getStartDate());
+        logger.info("getEndDate : {}", vo.getEndDate());
+
         
         try {
             pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
     
-            if( keyword.matches("[0-9]+") ){ //숫자만 있는 경우
-                Long tmpLong = Long.parseLong(keyword);
-                logger.info("tmpLong : {}", tmpLong);
-                logger.info("tmpLong type : {}", tmpLong.getClass());
+            if(vo.getStartDate() != null && vo.getEndDate() != null ){ // keyword + page + 날짜 계산하는 경우
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            
+                LocalDateTime startDate = LocalDate.parse(vo.getStartDate(), formatter).atStartOfDay();
+                LocalDateTime endDate = LocalDate.parse(vo.getEndDate(), formatter).atStartOfDay();
+                endDate = endDate.plusHours(23).plusMinutes(59).plusSeconds(60);
+                
+                logger.info("endDate  >> {}", endDate);
+                
+                Page<Support> resultPage = sr.findAllByTitleContainingIgnoreCaseOrUseridContainingIgnoreCaseAndRgstrdateBetween(pageable,keyword ,keyword, startDate, endDate);
+                List<Support> list = resultPage.getContent();
+                List<Support> slist = new ArrayList<>();
+                
+                for (Support support : list) {
+                    support.setStatus(support.getStatus().trim());
+                    support.setType(support.getType().trim());
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+                    slist.add(support);
+                } 
+                Long totalCnt = sr.countByTitleContainingIgnoreCaseOrUseridContainingIgnoreCaseAndRgstrdateBetween(keyword ,keyword, startDate, endDate);
+ 
+                model.addAttribute("totalCnt", totalCnt);
+                model.addAttribute("tmpCnt", slist.size());
 
-                Page<Support> resultPage = sr.findBySeq(pageable, tmpLong);
-                List<Support> list = resultPage.getContent();
-                List<Support> slist = new ArrayList<>();
-                
-                for (Support support : list) {
-                    support.setStatus(support.getStatus().trim());
-                    support.setType(support.getType().trim());
-                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
-                    slist.add(support);
-                } 
-        
-                // paging
-                model.addAttribute("list", slist);
-                model.addAttribute("nowPage", page);
-                model.addAttribute("totalPage", resultPage.getTotalPages());
-          
-                
-            } else{ //문자만 있는 경우
-                Page<Support> resultPage = sr.findByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(pageable, keyword, keyword);
-                List<Support> list = resultPage.getContent();
-                List<Support> slist = new ArrayList<>();
-                
-                for (Support support : list) {
-                    support.setStatus(support.getStatus().trim());
-                    support.setType(support.getType().trim());
-                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
-                    slist.add(support);
-                } 
-        
                 // paging
                 model.addAttribute("list", slist);
                 model.addAttribute("nowPage", page);
                 model.addAttribute("totalPage", resultPage.getTotalPages());
             
+                model.addAttribute("startDate", vo.getStartDate());
+                model.addAttribute("endDate", vo.getEndDate());
+
+            }else{
+                if( keyword.matches("[0-9]+") ){ //숫자만 있는 경우
+                    Long tmpLong = Long.parseLong(keyword);
+                    logger.info("tmpLong : {}", tmpLong);
+                    logger.info("tmpLong type : {}", tmpLong.getClass());
+    
+                    Page<Support> resultPage = sr.findBySeq(pageable, tmpLong);
+                    List<Support> list = resultPage.getContent();
+                    List<Support> slist = new ArrayList<>();
+                    
+                    for (Support support : list) {
+                        support.setStatus(support.getStatus().trim());
+                        support.setType(support.getType().trim());
+                        support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+                        slist.add(support);
+                    } 
+                    Long totalCnt = sr.countBySeq(tmpLong);
+                    model.addAttribute("totalCnt", totalCnt);
+                    model.addAttribute("tmpCnt", slist.size());
+                    // paging
+                    model.addAttribute("list", slist);
+                    model.addAttribute("nowPage", page);
+                    model.addAttribute("totalPage", resultPage.getTotalPages());
+                   
+                    model.addAttribute("keyword",keyword);
+
+                } else{ //문자만 있는 경우
+                    Page<Support> resultPage = sr.findByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(pageable, keyword, keyword);
+                    List<Support> list = resultPage.getContent();
+                    List<Support> slist = new ArrayList<>();
+                    
+                    for (Support support : list) {
+                        support.setStatus(support.getStatus().trim());
+                        support.setType(support.getType().trim());
+                        support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+                        slist.add(support);
+                    }  
+                    
+                    Long totalCnt = sr.countByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(keyword, keyword);
+                    model.addAttribute("totalCnt", totalCnt);
+                    model.addAttribute("tmpCnt", slist.size());
+                   
+            
+                    // paging
+                    model.addAttribute("list", slist);
+                    model.addAttribute("nowPage", page);
+                    model.addAttribute("totalPage", resultPage.getTotalPages());
+                    
+                    model.addAttribute("keyword",keyword);
+                }
+
             }
-
-
+            
 
         } catch (Exception e) {
             logger.error("[ERROR] string to long...{}", e);
+
         }
-        
         return "/support/list";
+
+        
+        // return "/support/list";
 	}
 
     @RequestMapping("/searchDate")
-    public String supportListSearchDate(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,  HttpSession session, Support vo, Model model) {
+    public String supportListSearchDate(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable, Support vo, Model model) {
         logger.info("\n\n\n <<< list >> page : {}", page);
-        logger.info("start : {}", vo.getStartDate());
-        logger.info("end : {}", vo.getEndDate());
-        
          
         try {
             pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             
-            logger.info("endDate: {}", vo.getEndDate());
-            logger.info("endDate + 1: {}", vo.getEndDate()+1);
-
-
             if(vo.getStartDate() != null){
                 LocalDateTime startDate = LocalDate.parse(vo.getStartDate(), formatter).atStartOfDay();
                 LocalDateTime endDate = LocalDate.parse(vo.getEndDate(), formatter).atStartOfDay();
@@ -161,10 +208,14 @@ public class SupportController {
                 for (Support support : list) {
                     support.setStatus(support.getStatus().trim());
                     support.setType(support.getType().trim());
-                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
                     slist.add(support);
                 } 
-                    
+                Long totalCnt = sr.countByRgstrdateBetween(startDate, endDate);
+ 
+                model.addAttribute("totalCnt", totalCnt);
+                model.addAttribute("tmpCnt", slist.size());
+
                 // paging
                 model.addAttribute("list", slist);
                 model.addAttribute("nowPage", page);
@@ -184,7 +235,7 @@ public class SupportController {
                 for (Support support : list) {
                     support.setStatus(support.getStatus().trim());
                     support.setType(support.getType().trim());
-                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                    support.setViewDate(support.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
                     slist.add(support);
                 }
                     
@@ -231,7 +282,7 @@ public class SupportController {
         logger.info("seq >> {}", vo.getSeq());
         Support edit = sr.findBySeq(vo.getSeq());
 
-        edit.setViewDate(edit.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+        edit.setViewDate(edit.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
         logger.info("list length : {}", list.size());
         model.addAttribute("edit", edit);
         model.addAttribute("clist", list);

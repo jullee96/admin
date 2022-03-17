@@ -43,5 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
     public Page<User> findAll(org.springframework.data.domain.Pageable pageable);
 
     public Page<User> findByRoleNot(org.springframework.data.domain.Pageable pageable, String string);
+    public Long countByRoleNot(String string);
+    public Long countByDomainNotNull();
 
 }

@@ -28,7 +28,7 @@
         
       </div>
 
-      <ul class="navbar-nav justify-content-end">
+      <%-- <ul class="navbar-nav justify-content-end">
         
         <li class="nav-item dropdown pe-2 d-flex align-items-center">
           <a href="/user/detail?userid=${userSession.userid} " class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -83,7 +83,7 @@
             </a>
         </li>
 
-      </ul>
+      </ul> --%>
 
     </div>
   </div>

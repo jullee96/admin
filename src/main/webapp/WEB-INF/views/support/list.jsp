@@ -14,8 +14,10 @@
 <%@ include file="../template/core.jsp" %>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<%-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> --%>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script src="../argon/assets/js/plugins/flatpickr.min.js"></script>
 
@@ -68,47 +70,41 @@
 
     <div class="card shadow-lg mx-4 card-profile-bottom">
         <div class="card-body p-3">
-
             <div class="table-responsive">
             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns" >
-                <div class="dataTable-top">
+            <%-- <form method="GET" class="frmSearch" id="frmSearch" > --%>
+                <div class="dataTable-top mb-n4">
                     <!-- 날짜 조회 -->
                     <div class="row">
                         <label class="text-md-start">신청일 기간 검색</label>
-                        <div class="col-sm-4 me-1">
-                            <input id="beforedate" style="width:70%; display: inline;" class="text-xs form-control form-control-sm datepicker flatpickr-input" placeholder="" value="${startDate}" type="text" onfocus="focused(this)" onfocusout="defocused(this)" readonly="readonly"> &nbsp;-
-                            
+                        <div class="col-sm-4">
+                            <input id="startDate" style="width:70%; display: inline;" class="text-xs form-control form-control-sm datepicker flatpickr-input" placeholder="시작일" value="${startDate}" type="text" onfocus="focused(this)" onfocusout="defocused(this)" readonly="readonly">&nbsp;&nbsp;&nbsp;-
                         </div>
                         <div class="col-sm-4 ms-n5">
-                            <input id="afterdate" style="width:70%; display: inline;" class="text-xs form-control form-control-sm datepicker flatpickr-input" placeholder="" value="${endDate}" type="text" onfocus="focused(this)" onfocusout="defocused(this)" readonly="readonly">
-                        <%-- <a class="" href="javascript:fnSearch();"><i class="fas fa-search"></i></a> --%>
-
+                            <input id="endDate" style="width:70%; display: inline;" class="text-xs form-control form-control-sm datepicker flatpickr-input" placeholder="종료일" value="${endDate}" type="text" onfocus="focused(this)" onfocusout="defocused(this)" readonly="readonly">
                         </div>
+                        <div class="mt-4 col-sm-12">
+                            <span class="text-sm" style="font-weight: 700;">현재</span>
+                            <span class="text-sm">${tmpCnt}</span> <span class="text-sm" style="font-weight: 700;">개</span> / 
+                            <span class="text-sm" style="font-weight: 700;">총</span>
+                            <span class="text-sm">${totalCnt}</span> <span class="text-sm" style="font-weight: 700;">개</span>
+                        </div>
+                        
                     </div>
                     <div class="dataTable-search ">
-
-                        <a href="javascript:;" class="filter-text filter-btn dropdown-toggle" data-bs-toggle="dropdown" id="navbarDropdownMenuLink2" aria-expanded="false">
-                        전체
-                        </a>
-                        
-                        <ul class="mt-2 filter-dropdown dropdown-menu dropdown-menu-lg-start px-2 py-3 ms-n4" aria-labelledby="navbarDropdownMenuLink2" style="">
-                            <li><a class="dropdown-item border-radius-md" href="javascript:;">분류</a></li>
-                            <li><a class="dropdown-item border-radius-md" href="javascript:;">상태</a></li>
-                            <li><a class="dropdown-item border-radius-md" href="javascript:;">아이디</a></li>
-                            <li>
-                                <hr class="horizontal dark my-2">
-                            </li>
-                            <li><a class="dropdown-item border-radius-md text-danger" href="javascript:;">필터 초기화</a></li>
-                        </ul>
-                        <input class="dataTable-input2" placeholder="검색" name="keyword" id="keyword" type="text" maxlength="30">
+                        <input class="dataTable-input2" placeholder="검색" name="keyword" id="keyword" value="${keyword}" type="text" maxlength="30">
                         <a class="search-btn" href="javascript:fnSearch();"><i class="fas fa-search"></i></a>
                     </div>
+                
+
                 </div>
-<hr>
+            <%-- </form> --%>
                     
               <div class="dataTable-container">
+              
                 <table class="table align-items-center mb-0">
                     <thead>
+                    <hr>
                         <tr>
                             <th style="font-size: 16px; color:#344767;">접수번호</th>
 
@@ -119,7 +115,7 @@
                             <th class="text-center" style="font-size: 16px; color:#344767;">유저 아이디</th>
                             
                             <th class="text-center" style="font-size: 16px; color:#344767;">상태</th>
-                            <th class="text-center" style="font-size: 16px; color:#344767;">신청일</th>
+                            <th class="text-center" style="font-size: 16px; color:#344767;">신청일시</th>
                             <th class=""></th>
                         </tr>
                     </thead>
@@ -204,13 +200,16 @@
                   <ul class="pagination">
                     <li class="page-item">
                         <c:if test="${nowPage > 1}">
-                            <a class="page-link" href="/support/list?page=${nowPage -1}" aria-label="Previous">
+                            <a class="page-link" href="javascript:funcSubmit('${nowPage -1}')" aria-label="Next">
+
+                            <%-- <a class="page-link" href="/support/list?page=${nowPage -1}" aria-label="Previous"> --%>
                                 <i class="fa fa-angle-left"></i>
                                 <span class="sr-only">Previous</span>
                             </a>
                         </c:if>
                         <c:if test="${nowPage <= 1}">
-                            <a class="page-link" href="/support/list" aria-label="Previous">
+                            <a class="page-link" href="javascript:funcSubmit('${nowPage }')" aria-label="Next">
+                            <%-- <a class="page-link" href="/support/list" aria-label="Previous"> --%>
                                 <i class="fa fa-angle-left"></i>
                                 <span class="sr-only">Previous</span>
                             </a>
@@ -218,28 +217,30 @@
                         
                         
                     </li>
+                    
                     <c:forEach begin="1" end="${totalPage}" var="i" >
                         <li class="page-item">
                             <c:if test="${nowPage == i-1}">
-                                <a class="badge-warning page-link" href="/support/list?page=${i-1}">${i}</a>
-                                <%-- <a class="badge-warning page-link" href="javascript:fnGetList('${i-1}')">${i}</a> --%>
+                                <a class="badge-warning page-link" href="javascript:funcSubmit('${i-1}')">${i}</a>
 
                             </c:if>
                             <c:if test="${nowPage != i-1}">
-                                <a class="page-link" href="/support/list?page=${i-1}">${i}</a>
-                                    <%-- <a class="page-link" href="javascript:fnGetList('${i-1}')">${i}</a> --%>
+                                    <a class="page-link" href="javascript:funcSubmit('${i-1}')">${i}</a>
                             </c:if>
                         </li>
                     </c:forEach>
+
                     <li class="page-item"> 
                         <c:if test="${nowPage < totalPage-1}">
-                            <a class="page-link" href="/support/list?page=${nowPage +1}" aria-label="Next">
+                            <a class="page-link" href="javascript:funcSubmit('${nowPage +1}')" aria-label="Next">
+                            <%-- <a class="page-link" href="/support/list?page=${nowPage +1}" aria-label="Next"> --%>
                                 <i class="fa fa-angle-right"></i>
                                 <span class="sr-only">Next</span>
                             </a>
                         </c:if>
                         <c:if test="${nowPage >= totalPage-1}">
-                            <a class="page-link" href="/support/list?page=${totalPage-1}" aria-label="Next">
+                            <a class="page-link" href="javascript:funcSubmit('${totalPage -1}')" aria-label="Next">
+                            <%-- <a class="page-link" href="/support/list?page=${totalPage-1}" aria-label="Next"> --%>
                                 <i class="fa fa-angle-right"></i>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -273,53 +274,35 @@ $(document).ready(function(){
     
     });
 
-    // $('#afterdate').datepicker("setDate",'now');
 
 });
 
-$('#afterdate').on("propertychange change value",function () {    
-    const beforedate = $("#beforedate").val();
-    const afterdate = $("#afterdate").val();
-      
-    console.log("beforedate : " + beforedate );
-    console.log("afterdate : " + afterdate );
+$('#endDate').on("propertychange change value",function () {    
+    const startDate = $("#startDate").val();
+    const endDate = $("#endDate").val();
+    
+    console.log("startDate : " + startDate );
+    console.log("endDate : " + endDate );
 
-    if(beforedate.length !=0 ){
-        if(afterdate < beforedate ){
-            $("#beforedate").val(afterdate);
-            $("#afterdate").val(beforedate);
+    if(startDate.length != 0 ){
+        if(endDate < startDate ){
+            $("#startDate").val(endDate);
+            $("#endDate").val(startDate);
+        
+            location.href="/support/searchDate?startDate="+endDate+"&endDate="+startDate;
+
+        } else{
+            location.href="/support/searchDate?startDate="+startDate+"&endDate="+endDate;
         }
-
-        location.href="/support/searchDate?startDate="+beforedate+"&endDate="+afterdate;
-
+        
+        
+       
     }else{
         // alert("시작일을 입력해주세요");
-        // $("#afterdate").val(afterdate);
-        location.href="/support/searchDate?endDate="+afterdate;
-
+        location.href="/support/search?endDate="+endDate;
     }
         
-    
-    // location.href="/support/searchDate?startDate="+beforedate+"&endDate="+afterdate;
 
-    // $.ajax( { 
-    //     url : "/support/search",
-    //     type:"POST",
-    //     data : {
-    //             startDate : beforedate,
-    //             endDate : afterdate
-    //         },
-    //     success : function(ret) {
-    //         if(ret.length>0){
-    //             alert( ret );
-    //         location.href="/login";
-
-    //         } else{
-    //             alert( "fail" );
-    //         }
-
-
-    // });  
 
 }); 
 
@@ -329,23 +312,27 @@ $('#afterdate').on("propertychange change value",function () {
 
 
 <script>
-function fnGetList(page){
-    console.log("page >> "+page);
-    const beforedate = $("#beforedate").val();
-    const afterdate = $("#afterdate").val();
-    console.log("beforedate >> "+beforedate);
-    console.log("afterdate >> "+afterdate);
 
-    $.ajax({
-        url : "/support/list",
-        type:"POST",
-        data : {
-                page : page,
-                startDate : beforedate,
-                endDate : afterdate
-            }
-    });
+function funcSubmit(page){
+    console.log("page >> "+page);
+    const keyword = $("#keyword").val();
+    
+    const startDate = $("#startDate").val();
+    const endDate = $("#endDate").val();
+    console.log("startDate >> "+startDate);
+    console.log("endDate >> "+endDate);
+    
+    if(startDate.length != 0 && endDate.length != 0  ){
+        location.href="/support/searchDate?startDate="+startDate+"&&endDate="+endDate+"&&page="+page;
+    }else if(keyword != null){
+        location.href="/support/search?keyword="+keyword+"&&page="+page;
+    }else{
+        location.href="/support/list?page="+page;
+
+    }
+
 }
+
 
 function fnSearch(){
     const keyword = $("#keyword").val();
