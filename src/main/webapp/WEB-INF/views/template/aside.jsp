@@ -112,14 +112,14 @@ function gotoUrl(url){
         </li>
 
         <li class="nav-item">
-          <a class="nav-link " href="/support/list">
+          <a class="nav-link " href="/product/list">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             </div>
             <span class="nav-link-text ms-1 text-sm">상품 리스트</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="/support/apply">
+          <a class="nav-link " href="/product/create">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             </div>
             <span class="nav-link-text ms-1 text-sm">상품등록</span>

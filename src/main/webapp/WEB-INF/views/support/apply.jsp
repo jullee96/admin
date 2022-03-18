@@ -101,22 +101,21 @@ img[alt=alt_img] {
                         </div>
 
                         <div class="col-sm-12">
-                        <label class="mt-4">내용</label>
-                        <div class="contents" id ="editor"> ${edit.contents}</div>
-                        <div id="contents"></div>
-                        
+                            <label class="mt-4">내용</label>
+                            <div class="contents" id ="editor"> ${edit.contents}</div>
+                            <div id="contents"></div>
+                        </div>
+
                     </div>
 
             </div>
-
-        </div>
         
-        <div class="card shadow-lg mx-4 card-profile-bottom">
-            <div class="card-body p-3">    
+            <div class="card shadow-lg mx-4 card-profile-bottom">
+                <div class="card-body p-3">    
+                </div>
             </div>
-        </div>
 
-      </div>
+        </div>
     </form>
     
 </body>

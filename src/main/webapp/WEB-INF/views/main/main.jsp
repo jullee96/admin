@@ -88,10 +88,10 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-uppercase font-weight-bold">이번달 매출합</p>
                     <h5 class="font-weight-bolder">
-                      $53,000
+                      0
                     </h5>
-                    <p class="mb-0">
-                      <span class="text-success text-sm font-weight-bolder">+55%</span>
+                    <p class="mb-0 text-sm">
+                      <span class="text-success font-weight-bolder">+55%</span>
                       저번달 대비
                     </p>
                   </div>
@@ -115,8 +115,8 @@
                     <h5 class="font-weight-bolder">
                       ${totalUserCnt}
                     </h5>
-                    <p class="mb-0">
-                      <span class="text-success text-sm font-weight-bolder">+3%</span>
+                    <p class="mb-0 text-sm">
+                      <span class="text-success font-weight-bolder">+3%</span>
                       저번달 대비
                     </p>
                   </div>
@@ -140,8 +140,8 @@
                     <h5 class="font-weight-bolder">
                       ${totalDomainCnt}
                     </h5>
-                    <p class="mb-0">
-                      <span class="text-danger text-sm font-weight-bolder">-2%</span>
+                    <p class="mb-0 text-sm">
+                      <span class="text-danger font-weight-bolder">-2%</span>
                       저번달 대비
                     </p>
                   </div>
@@ -164,11 +164,16 @@
                     <p class="text-sm mb-0 text-uppercase font-weight-bold">기술문의 처리 현황</p>
                      <span class="text-success text-sm font-weight-bolder">처리중</span>
                       /
-                     <span class="text-secondary text-sm font-weight-bolder">답변 완료</span>
-                    <h5 class="font-weight-bolder">
-                    <span class="text-success">${totalSupportProcessingCnt} </span> / ${totalSupportCnt - totalSupportProcessingCnt}
-                    </h5>
-
+                     <span class="text-dark text-sm font-weight-bolder">답변 완료</span>
+                        <br>
+                      <span class="h5 font-weight-bolder text-success ms-3">${totalSupportProcessingCnt} &nbsp;  </span> 
+                      / <span class="h5 font-weight-bolder text-dark text-align-right"> &nbsp;  ${totalSupportCnt - totalSupportProcessingCnt} </span> 
+                    <p style="display:inline;" class="text-sm mb-0 ms-4">
+                    처리율
+                      <span style="display:inline;" class="text-danger text-sm font-weight-bolder">
+                        <fmt:formatNumber type="percent" value="${totalSupportProcessingCnt / totalSupportCnt}"/>
+                      </span>
+                    </p>
                   </div>
                 </div>
                 <div class="col-4 text-end">
