@@ -14,7 +14,6 @@
 <%@ include file="../template/core.jsp" %>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-<%-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> --%>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -57,8 +56,8 @@
 
 
 <body class="g-sidenav-show bg-gray-100">
-  <input type="hidden" id="pageTitle" value="기술지원 관리">
-  <input type="hidden" id="pageSubTitle" value="기술지원 문의 내역">
+  <input type="hidden" id="pageTitle" value="상품 관리">
+  <input type="hidden" id="pageSubTitle" value="상품 리스트">
 
   <div class="position-absolute w-100 min-height-300 top-0" >
     <span class="mask bg-warning opacity-6"></span>
@@ -77,18 +76,16 @@
             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns" >
                     
               <div class="dataTable-container">
+                <div class="d-flex align-items-center">
+                    <a href="/product/create" class="btn btn-danger btn-sm ms-auto"> 등록하기</a>
+                </div>
                 <table class="table align-items-center mb-0">
                     <thead>
-                   
                         <tr>
                             <th style="font-size: 16px; color:#344767;">상품번호</th>
-
                             <th style="font-size: 16px; color:#344767;">상품 이름</th>
- 
                             <th style="font-size: 16px; color:#344767;">가격</th>
-                            
                             <th class="text-center" style="font-size: 16px; color:#344767;">등록일</th>
-                            
                             <th class=""></th>
                         </tr>
                     </thead>
@@ -223,7 +220,7 @@ function fnSearch(){
 function fnDelete(pdid){
     console.log("pdid >> "+pdid);
     if(confirm("삭제하시겠습니까?")){
-        location.href="/support/delete?pdid="+pdid;
+        location.href="/product/delete?pdid="+pdid;
     }
 }
 

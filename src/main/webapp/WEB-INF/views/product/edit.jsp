@@ -41,6 +41,15 @@ img[alt=alt_img] {
     margin-left:10px; 
 }
 
+.icon-pos{
+    position: relative;
+    top:-32px;
+    left:-30px;
+}
+.icon-pos:hover{
+
+}
+
 </style>
 
 
@@ -61,7 +70,9 @@ img[alt=alt_img] {
     </div>
     <!-- End Navbar -->
 
-    <form id="productForm" name="productForm" method="post" action="javascript:fnSubmit();" > 
+    <form id="productForm" name="productForm" method="post" action="" > 
+        <input type="hidden" id="pdid" name="pdid" value="${product.pdid}">
+   
         <div class="row mb-4">
             <div class=" col-12 col-md-4 card shadow-lg mx-4 " style="margin-left:30px;">
                 <div class="card-body">
@@ -69,46 +80,47 @@ img[alt=alt_img] {
                     <div class="mt-4 row">
                         <div class="col-12">
                             <label class="h6">이름</label>
-                            <input class="form-control" type="text" id="pdname" name="pdname" >
+                            <input class="form-control" type="text" id="pdname" name="pdname" value="${product.pdname}">
                         </div>
                         <div class="col-12 mt-3 mt-sm-0">
                             <label class="h6 mt-3">가격</label>
-                            <input class="form-control" type="text" id="pdprice" name="pdprice" maxlength="10" oninput="maxLengthCheck(this)">
+                            <input class="form-control" type="text" id="pdprice" name="pdprice" maxlength="10" oninput="maxLengthCheck(this)" value="${product.pdprice}">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 mb-4">
+                        <div class="col-sm-12 mb-2">
                             <label class="h6 mt-4 ">설명</label>
-                            <input type="hidden" name="pdinfo" id="pdinfo" value="">
-                            <div class="contents" id ="editor"> ${edit.contents}</div>
+                            <input type="hidden" name="pdinfo" id="pdinfo" value="${product.pdinfo}">
+                            <div class="contents" id ="editor"> ${product.pdinfo}</div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 mb-4">
-                            <input type="hidden" name="pdfeature" id="pdfeature">
+                            <input type="hidden" name="pdfeature" id="pdfeature" value="${product.pdfeature}">
 
                             <label class="h6 ">특징</label>
-                            <ul class="check-list">
-                                <li class="mb-2">
-                                    <input class="form-control " id="feat_1" name="feat_1" >
-                                </li>
-                                <li class="mb-2">
-                                    <input class="form-control " id="feat_2" name="feat_2" >
-                                </li>
-                                <li class="mb-2">
-                                    <input class="form-control " id="feat_3" name="feat_3" >
-                                </li>
-                            </ul>        
+                            <button type="button" class="mt-3 ms-2 btn btn-xs btn-outline-secondary " onclick="fnAddFeat()">+ 추가</button>
+                            <ul id="check-list" class="check-list">
                                 
-                         
+                            </ul>        
                         </div>
                     </div>
                     
                     <div class="d-flex align-items-center">
                         <a href="/product/list" class="btn btn-secondary btn-sm ms-auto"> 목록</a>
-                        <button type="submit" class="btn btn-danger btn-sm " style="margin-left:1%">
-                            등록
-                        </button>
+                        <c:if test ="${product.pdid == null }">
+                            <button type="button" class="btn btn-danger btn-sm " style="margin-left:1%" onclick="fnSubmit('');">
+                                등록
+                            </button>
+                        </c:if>
+                        <c:if test ="${product.pdid != null }">
+                            <a href="/product/delete?pdid=${product.pdid}" class="btn btn-dark btn-sm" style="margin-left:1%"> 삭제</a>
+
+                            <button type="button" class="btn btn-warning btn-sm " style="margin-left:1%" onclick="fnSubmit('${product.pdid}');">
+                                수정
+                            </button>
+
+                        </c:if>
                     </div>
                 </div>
 
@@ -128,8 +140,7 @@ img[alt=alt_img] {
 </body>
 
 <%@ include file="../template/core.jsp" %>
-<script class="code-js">
-
+<script class="code-js"> 
 const Editor = toastui.Editor;
 const editor = new Editor({ 
     el: document.querySelector('#editor'), 
@@ -162,10 +173,7 @@ const editor = new Editor({
     toolbarItems: [
         ['heading', 'bold', 'italic', 'strike'],
         ['hr', 'quote'],
-        ['ul', 'ol', 'task', 'indent', 'outdent'],
-        ['table', 'link'],
-        ['code', 'codeblock'],
-        ['scrollSync']
+        ['ul', 'ol', 'task'],
     ]
          
         
@@ -179,33 +187,67 @@ const editor = new Editor({
 
 
 <script>
+var n=0;
+$(document).ready(function(){
+    const pdid = $("#pdid").val().length;
 
+    if(pdid > 0){ //수정 하는 경우
+        const pdfeatureList = $("#pdfeature").val().split(',');
+        
+        $( "#view_name" ).text($( "#pdname" ).val());
+        $( "#view_price" ).text($( "#pdprice" ).val());
+        document.getElementById("viewer").innerText = $( "#pdinfo" ).val().replace(/<p[^>]*>/g,'').replace(/<\/p>/g, '');
+        
+        n = pdfeatureList.length;
+      
+        let j=1;
 
-
-    $( "#pdname" ).on("keyup propertychange change value",function() {
-        const pdname = $("#pdname").val();
-        document.getElementById("view_name").innerText = pdname;
-    });
-
-    $( "#pdprice" ).on("keyup propertychange change value",function() {
-        const pdprice = $("#pdprice").val();
-        document.getElementById("view_price").innerText = pdprice;
-    });
-
-    $( "#feat_1" ).keyup(function() {
-        const feat_1 = $("#feat_1").val();
-        document.getElementById("view_feat_1").innerText = feat_1;
-    });
-
-    $( "#feat_2" ).keyup(function() {
-        const feat_2 = $("#feat_2").val();
-        document.getElementById("view_feat_2").innerText = feat_2;
-    });
+        for(let i=1;i<=n;i++){
+            $("#check-list").append("<li name='feat-li' id='"+i+"' > <input class='form-control' id='feat_"+i+"' name='feat_"+i+"' value='"+pdfeatureList[i-1]+"' > <a href='javascript:fnDeleteFeat("+i+");'><div class='icon-pos icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center'><i class='fas fa-minus' aria-hidden='true'></i></div></a> </li> ");
+            $("#feats").append("<div id='view_"+i+"' class='d-flex justify-content-lg-start justify-content-center p-2'> <div class='icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center'>  <i class='fas fa-check opacity-10' aria-hidden='true'></i> </div> <div><span id='view_feat_"+i+"' class='ps-3' >"+pdfeatureList[i-1]+"</span></div> </div>");
+            j++;    
+        }
     
-    $( "#feat_3" ).keyup(function() {
-        const feat_3 = $("#feat_3").val();
-        document.getElementById("view_feat_3").innerText = feat_3;
-    });
+    
+    }
+
+});
+
+var cnt = 1;
+function fnAddFeat(){
+    if(n == 0 ){
+        $("#check-list").append("<li name='feat-li' id='"+cnt+"' ><input class='form-control' id='feat_"+cnt+"' name='feat_"+cnt+"' > <a href='javascript:fnDeleteFeat("+cnt+");'><div class='icon-pos icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center'><i class='fas fa-minus' aria-hidden='true'></i></div></a></li>");
+        $("#feats").append("<div id='view_"+cnt+"' class='d-flex justify-content-lg-start justify-content-center p-2'> <div class='icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center'>  <i class='fas fa-check opacity-10' aria-hidden='true'></i> </div> <div><span id='view_feat_"+cnt+"' class='ps-3'>입력해주세요</span></div> </div>");
+    
+        cnt++;
+    }else{ 
+        n++;
+        $("#check-list").append("<li name='feat-li' id='"+n+"'><input class='form-control' id='feat_"+n+"' name='feat_"+n+"' > <a href='javascript:fnDeleteFeat("+n+");'><div class='icon-pos icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center'><i class='fas fa-minus' aria-hidden='true'></i></div></a></li>");
+        $("#feats").append("<div id='view_"+n+"' class='d-flex justify-content-lg-start justify-content-center p-2'> <div class='icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center'>  <i class='fas fa-check opacity-10' aria-hidden='true'></i> </div> <div><span id='view_feat_"+n+"' class='ps-3' >입력해주세요</span></div> </div>");
+        
+    }
+      
+
+}
+
+$( "#check-list" ).on("keyup value", function(event){
+    document.getElementById("view_"+event.target.id).innerText = event.target.value;
+});
+
+
+
+$( "#pdname" ).on("keyup propertychange change value",function() {
+    const pdname = $("#pdname").val();
+    document.getElementById("view_name").innerText = pdname;
+});
+
+$( "#pdprice" ).on("keyup propertychange change value",function() {
+    const pdprice = $("#pdprice").val();
+    document.getElementById("view_price").innerText = pdprice;
+});
+
+
+
 
 function maxLengthCheck(object){
     if (object.value.length > object.maxLength){
@@ -214,25 +256,40 @@ function maxLengthCheck(object){
 }
 
 
-function fnSubmit(){
-    const feat1 = $("#feat_1").val();
-    const feat2 = $("#feat_2").val();
-    const feat3 = $("#feat_3").val();
+function makeFeats(){
+    var len = $("li[name='feat-li']").length;
+   
+    var feats = new Array(len);
 
-    var feats = feat1;
-    feats += ","+feat2;
-    feats += ","+feat3;
-    
+    for(let i=0;i<len;i++){ // 0 1 2 3 
+        feats[i] = $("li > input ")[i].value;
+    }
+                
+    return feats;
+}
+
+
+function fnSubmit(pdid){
+    var feats = makeFeats();
+
     console.log("feats : "+feats);
-
+    document.productForm.pdfeature.value=feats;
     document.productForm.action="/product/save";
     document.productForm.pdinfo.value=editor.getHTML();
-    document.productForm.pdfeature.value=feats;
-    console.log("pdfeature : "+$("#pdfeature").val());
-
-
-
     document.productForm.submit();
+
+}
+
+
+function fnDeleteFeat(id){
+    console.log("feat_"+id );
+    
+    $("#"+id).remove();
+    $("#view_"+id).remove();
+    
+    // console.log("makeFeat() >"+ makeFeats());
+
+
 }
 
 </script>

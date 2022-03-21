@@ -68,39 +68,24 @@
                                     
                                     <span id="view_price" class="h2 font-weight-bold mt-2"> </span>
                                     
-                                <span class="h2 font-weight-bold">원</span>
+                                <span class="h2 font-weight-bold"> 원</span>
                             </div>
                             
                             <div class="card-body text-lg-start text-center pt-0">
                                 <div id="viewer" class="ms-3 d-flex justify-content-lg-start justify-content-center p-2">
-                                설명을 입력해주세요
+                                    설명을 입력해주세요
                                 </div>
-                                <div class="d-flex justify-content-lg-start justify-content-center p-2">
+                                <div id="feats"></div>
+                                <%-- <div class="d-flex justify-content-lg-start justify-content-center p-2">
                                     <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
                                         <i class="fas fa-check opacity-10" aria-hidden="true"></i>
                                     </div>
                                     <div>
                                         <span id="view_feat_1" class="ps-3">입력해주세요</span>
                                     </div>
-                                </div>
+                                </div> --%>
 
-                                <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
-                                        <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                    <div>
-                                        <span id="view_feat_2" class="ps-3">입력해주세요</span>
-                                    </div>
-                                </div>
 
-                                <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
-                                        <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                    <div>
-                                        <span id="view_feat_3" class="ps-3">입력해주세요</span>
-                                    </div>
-                                </div>
                                 
                                 <a href="javascript:;" class="btn btn-icon btn-dark d-lg-block mt-3 mb-0">
                                     선택하기

@@ -40,9 +40,12 @@ public class ProductController {
 
 
     @RequestMapping("/view")
-    public String supportView(Product vo, Model model) {
-    
-        return "/product/list";
+    public String supportView(Product vo, Model model) { 
+        
+        vo = pr.findByPdid(vo.getPdid());
+        model.addAttribute("product", vo);
+
+        return "/product/edit";
     }
     
 
@@ -55,23 +58,27 @@ public class ProductController {
     
     @RequestMapping("/save")
     public String supportSave(Product vo, Model model) {
+        logger.info("getPdid... {}",vo.getPdid());
+        
         logger.info("save... {}",vo.getPdname());
         logger.info("feat1... {}",vo.getPdfeature());
         
         vo.setRgstrdate(LocalDateTime.now());
-        pr.save(vo);
+
+        if(vo.getPdid() == null){
+            pr.save(vo);
+        }else{
+            vo.setUpdtdate(LocalDateTime.now());
+            logger.info("update... {}",pr.update(vo));
+        }
         return "redirect:/product/list";
     }
 
-    @RequestMapping("/edit")
-    public String supportEdit(Product vo, Model model) {
-    
-        return "redirect:/product/list";
-    }
+
 
     @RequestMapping("/delete")
     public String supportDelete(Product vo, Model model) {
-    
+        pr.delete(vo);
         return "redirect:/product/list";
     }
 
