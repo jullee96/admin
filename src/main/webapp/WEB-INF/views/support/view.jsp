@@ -63,7 +63,7 @@ img[alt=alt_img] {
             <!-- 문의 -->
             <div class="card-body p-3">
                 <h5 class="font-weight-bolder">문의 상세 
-                    
+                    <input type="hidden" id="clistSize" value="${clistSize}">
                     <c:if test="${clistSize != 0}">
                         <button type="button" class="mt-2 btn btn-outline-secondary btn-status"> 답변완료</button>  
                     </c:if>
@@ -107,6 +107,7 @@ img[alt=alt_img] {
 
                         <div class="col-sm-12 ">
                         <label class="h6 mt-4">내용</label>
+                        <input id="content" type="hidden" value="${edit.contents}">
                         <div class="contents" id ="viewer"> ${edit.contents}</div>
                         <div id="contents"></div>
                         <hr>
@@ -128,11 +129,11 @@ img[alt=alt_img] {
             <div class="card mt-2 mb-4 shadow-lg mx-4 card-profile-bottom" style="background-color:#63b3ed1c;">
                 <div class="card-body p-3" >  
                     <h6 class="font-weight-bolder">ㄴ ${list.userid}</h6>
-                    <div class="contents" id ="viewer2"> ${list.comment}</div>
+                    <div class="contents" id ="viewer_cmt_${status.count}"></div>
                     ${list.viewDate}
-                    <a style="margin-left:92%;" href="javascript:fnShowEiditor('edit','${list.seq}');" >[수정]</a> | 
+                    <a style="margin-left:92%;" href="javascript:fnShowEiditor('edit','${status.count}');" >[수정]</a> | 
                     <a href="/support/deleteComment?seq=${list.seq}" >[삭제]</a>
-                    <input id="cmt_${list.seq}" type="hidden" value='${list.comment}'>
+                    <input id="cmt_${status.count}" type="hidden" value='${list.comment}'>
                 </div>
             </div>
 
@@ -160,39 +161,37 @@ img[alt=alt_img] {
 
 <%@ include file="../template/core.jsp" %>
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
     const select_type = $("#select_type").val();
-
     $("#type").val(select_type);  
 
-    });
-</script>
+});
 
-<script class="code-js">
-const content = [].join('\n');
-
-const Viewer = toastui.Editor;
+const content = $("#content").val();
+const Viewer = toastui.Editor.factory;
 const viewer = new Viewer({ 
     el: document.querySelector('#viewer'), 
     height: '500px', 
-    initialValue: content   
+    initialValue: content, 
     viewer:true
 });
 
+const n = $("#clistSize").val();
+var arr = new Array(n);
 
+for(let i=1 ; i <= n ; i++){
+    var cmt = $("#cmt_"+i).val();
+    
+    arr[i] = toastui.Editor.factory({
+        el: document.querySelector('#viewer_cmt_'+i), 
+        viewer: true, 
+        height: '100px',
+        initialValue : cmt 
+    });
+        
 
-const Viewer2 = toastui.Editor;
-const viewer2 = new Viewer2({ 
-    el: document.querySelector('#viewer2'), 
-    height: '100px', 
-    initialValue: content,   
-    viewer:true
+}
 
-});
-
-</script>
-
-<script class="code-js">
 
 const Editor = toastui.Editor;
 const editor = new Editor({ 
@@ -281,6 +280,7 @@ function fnClose(){
 }
 
 function fnShowEiditor(type, seq){
+    console.log("n : "+n);
     console.log("seq : "+seq);
     
     console.log("type : "+type);
@@ -288,6 +288,7 @@ function fnShowEiditor(type, seq){
     const comment = $("#cmt_"+seq).val();
 
     console.log("comment : "+comment);
+    
     if($('#div-editor').css('display') == 'none'){
         $("#gotoList").hide();
         $("#gotoEditor").hide();
@@ -304,13 +305,18 @@ function fnShowEiditor(type, seq){
 
             $(".ProseMirror > p").remove();
             $(".ProseMirror").append(comment);
+        
         } else if(type =="new"){
             $("#btnSave").show();
             $("#btnEdit").hide();
         }
 
         
-    }
+    } else{
+        $(".ProseMirror > p").remove();
+        $(".ProseMirror").append(comment);
+        
+    }   
 }
 
 
