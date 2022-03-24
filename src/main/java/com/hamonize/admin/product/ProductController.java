@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +24,8 @@ public class ProductController {
 
     @RequestMapping("/list")
     public String supportList(@RequestParam(required = false, defaultValue = "0", value = "page") int page, Pageable pageable ,Product vo, Model model) {
-        logger.info("--------------- ");
         List<Product> list = pr.findAll();
         List<Product> plist = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
             
         for (Product product : list) {
             product.setViewDate(product.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
@@ -58,10 +57,6 @@ public class ProductController {
     
     @RequestMapping("/save")
     public String supportSave(Product vo, Model model) {
-        logger.info("getPdid... {}",vo.getPdid());
-        
-        logger.info("save... {}",vo.getPdname());
-        logger.info("feat1... {}",vo.getPdfeature());
         
         vo.setRgstrdate(LocalDateTime.now());
 
@@ -69,7 +64,7 @@ public class ProductController {
             pr.save(vo);
         }else{
             vo.setUpdtdate(LocalDateTime.now());
-            logger.info("update... {}",pr.update(vo));
+            pr.update(vo);
         }
         return "redirect:/product/list";
     }
@@ -85,7 +80,10 @@ public class ProductController {
 
     @RequestMapping("/pricing")
     public String pricing(Product vo, Model model) {
-    
+        List<Product> list = pr.findByPdstatusOrderByPdid("s");
+        model.addAttribute("list", list);
+        model.addAttribute("listLen", list.size());
+
         return "/product/pricing";
     }
 

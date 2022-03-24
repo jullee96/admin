@@ -43,4 +43,6 @@ public interface FileRepository extends JpaRepository<FileVO, String>{
     FileVO findByUseridAndKeytypeAndSeq(String userid, String string, Integer seq);
 
     FileVO findByUseridAndSeq(String userid, Integer seq);
+
+    FileVO findBySeqAndKeytype(int seq, String string);
 }

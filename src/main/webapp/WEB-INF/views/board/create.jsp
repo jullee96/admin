@@ -9,13 +9,14 @@
   <title>
     Hamonize Cloud Service | Support Apply
   </title>
-<script src="src/main/resources/static/tree.jquery.js"></script>
-<link rel="stylesheet" href="/jqtree.css"/>
-
- 
-</head>
 <%@ include file="../template/top2.jsp" %>
 
+<link rel="stylesheet" href="/dist/themes/default/style.min.css" />
+<script src="/dist/jstree.min.js"></script>
+
+
+
+</head>
 
 
 <body class="g-sidenav-show bg-gray-100">
@@ -39,7 +40,9 @@
             <!-- 메뉴 트리 -->
             <div class="col-md-4 card shadow-lg mx-4 ">
                 <div class="card-body p-3">
-                    <div id="tree1"> </div>
+                    <div id="jstree">
+
+                    </div>
                 </div>
             </div>
 
@@ -111,25 +114,31 @@
 
 <%@ include file="../template/core.jsp" %>
 <script>
-$(document).ready(function(){
-    var data = [
-    {
-        name: 'examples',
-        children: [
-            { name: '<a href="example1.html">Example 1</a>' },
-            { name: '<a href="example2.html">Example 2</a>' },
-            '<a href="example3.html">Example </a>'
-        ]
+$('#jstree').jstree({
+    'core': {
+        'data': [{
+            "id": "ajson1",
+            "parent": "#",
+            "text": "Simple root node"
+        }, {
+            "id": "ajson2",
+            "parent": "#",
+            "text": "Root node 2"
+        }, {
+            "id": "ajson3",
+            "parent": "ajson2",
+            "text": "Child 1"
+        }, {
+            "id": "ajson4",
+            "parent": "ajson2",
+            "text": "Child 2"
+        }, ]
     }
-    ];
+}).bind('select_node.jstree', function(event, data){
+    var id = data.instance.get_node(data.selected).id;        //id 가져오기
+    console.log("id = >"+id );
+});
 
-    // set autoEscape to false
-    $('#tree1').tree({
-    data: data,
-    autoEscape: false,
-    autoOpen: true
-    });
-})
 
 </script>
 </html>

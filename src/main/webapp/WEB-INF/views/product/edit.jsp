@@ -74,9 +74,26 @@ img[alt=alt_img] {
         <input type="hidden" id="pdid" name="pdid" value="${product.pdid}">
    
         <div class="row mb-4">
-            <div class=" col-12 col-md-4 card shadow-lg mx-4 " style="margin-left:30px;">
+            <div class=" col-12 col-md-6 card shadow-lg mx-4 " style="margin-left:30px;">
                 <div class="card-body">
                     <h5 class="font-weight-bolder">상품 등록</h5>
+                    <label class="h6">화면 출력 여부</label> 
+                    <input type="hidden" id="pdstatus" name="pdstatus" value="${product.pdstatus}">   
+                    <div class="form-check form-switch">
+                        <c:if test="${product.pdstatus == 's'}">
+                            <input class="form-check-input2"  type="checkbox" id="status" checked="checked">
+                            <label class="form-check-label" for="status"></label>
+                        </c:if>
+                        <c:if test="${product.pdstatus == 'h'}">
+                            <input class="form-check-input2"  type="checkbox" id="status" >
+                            <label class="form-check-label" for="status"></label>
+                        </c:if>
+                        <c:if test="${product.pdstatus == '' || product.pdstatus == null}">
+                            <input class="form-check-input2"  type="checkbox" id="status" checked="checked">
+                            <label class="form-check-label" for="status"></label>
+                        </c:if>
+                    </div>
+                    
                     <div class="mt-4 row">
                         <div class="col-12">
                             <label class="h6">이름</label>
@@ -126,10 +143,10 @@ img[alt=alt_img] {
 
             </div>
 
-            <div class="col-12 col-md-6 card shadow-lg mx-4">
+            <div class="col-12 col-md-4 card shadow-lg mx-4">
                 <div class="card-body">
                     <h5 class="font-weight-bolder">미리보기</h5>
-                        <%@ include file="../product/pricing_m.jsp" %>  
+                        <%@ include file="../product/detail.jsp" %>  
                 </div>
             </div>
 
@@ -141,6 +158,7 @@ img[alt=alt_img] {
 
 <%@ include file="../template/core.jsp" %>
 <script class="code-js"> 
+var markdown;
 const Editor = toastui.Editor;
 const editor = new Editor({ 
     el: document.querySelector('#editor'), 
@@ -166,8 +184,7 @@ const editor = new Editor({
     },
     events: {
         keyup(editorType, ev) {
-            const aa=editor.getMarkdown();
-            document.getElementById("viewer").innerText = editor.getMarkdown();
+            viewer.setMarkdown(editor.getHTML());
         }
     },
     toolbarItems: [
@@ -178,9 +195,6 @@ const editor = new Editor({
          
         
 });
-
-    
-
 
 
 </script>
@@ -193,19 +207,18 @@ $(document).ready(function(){
 
     if(pdid > 0){ //수정 하는 경우
         const pdfeatureList = $("#pdfeature").val().split(',');
+        const price = $( "#pdprice" ).val().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         
         $( "#view_name" ).text($( "#pdname" ).val());
-        $( "#view_price" ).text($( "#pdprice" ).val());
-        document.getElementById("viewer").innerText = $( "#pdinfo" ).val().replace(/<p[^>]*>/g,'').replace(/<\/p>/g, '');
-        
+        $( "#view_price" ).text(price);
+      
+       viewer.setMarkdown(editor.getHTML());
+        // document.getElementById("viewer").innerHTML = $("#pdinfo").val();
         n = pdfeatureList.length;
       
-        let j=1;
-
         for(let i=1;i<=n;i++){
             $("#check-list").append("<li name='feat-li' id='"+i+"' > <input class='form-control' id='feat_"+i+"' name='feat_"+i+"' value='"+pdfeatureList[i-1]+"' > <a href='javascript:fnDeleteFeat("+i+");'><div class='icon-pos icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center'><i class='fas fa-minus' aria-hidden='true'></i></div></a> </li> ");
             $("#feats").append("<div id='view_"+i+"' class='d-flex justify-content-lg-start justify-content-center p-2'> <div class='icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center'>  <i class='fas fa-check opacity-10' aria-hidden='true'></i> </div> <div><span id='view_feat_"+i+"' class='ps-3' >"+pdfeatureList[i-1]+"</span></div> </div>");
-            j++;    
         }
     
     
@@ -226,7 +239,6 @@ function fnAddFeat(){
         $("#feats").append("<div id='view_"+n+"' class='d-flex justify-content-lg-start justify-content-center p-2'> <div class='icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center'>  <i class='fas fa-check opacity-10' aria-hidden='true'></i> </div> <div><span id='view_feat_"+n+"' class='ps-3' >입력해주세요</span></div> </div>");
         
     }
-      
 
 }
 
@@ -242,7 +254,7 @@ $( "#pdname" ).on("keyup propertychange change value",function() {
 });
 
 $( "#pdprice" ).on("keyup propertychange change value",function() {
-    const pdprice = $("#pdprice").val();
+    const pdprice = $("#pdprice").val().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
     document.getElementById("view_price").innerText = pdprice;
 });
 
@@ -271,8 +283,15 @@ function makeFeats(){
 
 function fnSubmit(pdid){
     var feats = makeFeats();
+    const checked = $("#status").is(":checked");
 
-    console.log("feats : "+feats);
+    
+    if(checked){
+        document.productForm.pdstatus.value="s";
+    }else{
+        document.productForm.pdstatus.value="h";
+    }
+    
     document.productForm.pdfeature.value=feats;
     document.productForm.action="/product/save";
     document.productForm.pdinfo.value=editor.getHTML();
@@ -287,9 +306,6 @@ function fnDeleteFeat(id){
     $("#"+id).remove();
     $("#view_"+id).remove();
     
-    // console.log("makeFeat() >"+ makeFeats());
-
-
 }
 
 </script>

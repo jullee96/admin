@@ -169,12 +169,14 @@ img[alt=alt_img] {
 </script>
 
 <script class="code-js">
+const content = [].join('\n');
 
 const Viewer = toastui.Editor;
 const viewer = new Viewer({ 
     el: document.querySelector('#viewer'), 
     height: '500px', 
     initialValue: content   
+    viewer:true
 });
 
 
@@ -182,8 +184,10 @@ const viewer = new Viewer({
 const Viewer2 = toastui.Editor;
 const viewer2 = new Viewer2({ 
     el: document.querySelector('#viewer2'), 
-    height: '500px', 
-    initialValue: content   
+    height: '100px', 
+    initialValue: content,   
+    viewer:true
+
 });
 
 </script>

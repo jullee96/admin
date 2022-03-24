@@ -85,6 +85,8 @@
                             <th style="font-size: 16px; color:#344767;">상품번호</th>
                             <th style="font-size: 16px; color:#344767;">상품 이름</th>
                             <th style="font-size: 16px; color:#344767;">가격</th>
+                            <th style="font-size: 16px; color:#344767;">출력 여부</th>
+
                             <th class="text-center" style="font-size: 16px; color:#344767;">등록일</th>
                             <th class=""></th>
                         </tr>
@@ -110,7 +112,14 @@
                                         ${list.pdprice}
                                     </span>
                                 </td>
-                                
+                                <td class="align-center text-start">
+                                    <c:if test="${list.pdstatus == 's'}">
+                                        <span class="text-secondary text-xs font-weight-bold"> 출력 </span>
+                                    </c:if>
+                                   <c:if test="${list.pdstatus == 'h'}">
+                                        <span class="text-secondary text-xs font-weight-bold"> 미출력 </span>
+                                    </c:if>
+                                </td>
                                
                                 <td class="align-middle text-center">
                                    <span class="text-secondary text-xs font-weight-bold">  ${list.viewDate} </span>

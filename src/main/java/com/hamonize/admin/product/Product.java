@@ -44,6 +44,10 @@ public class Product {
     @Column(name = "updt_date")
     private LocalDateTime updtdate;
 
+    @Comment("화면 출력 여부> 's':show, 'h':hide" )
+    @Column(name = "pd_status", columnDefinition= "varchar(10) default 's' " )
+    private String pdstatus;
+   
     @Transient
     private String viewDate;
 

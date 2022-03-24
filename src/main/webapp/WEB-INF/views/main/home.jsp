@@ -69,7 +69,7 @@
             <nav id="nav" class="absolute top-0 left-0 z-50 flex flex-col items-center justify-between hidden w-full h-64 pt-5 mt-24 text-sm text-gray-800 bg-white border-t border-gray-200 md:w-auto md:flex-row md:h-24 lg:text-base md:bg-transparent md:mt-0 md:border-none md:py-0 md:flex md:relative">
                 <a href="#" class="ml-0 mr-0 font-bold duration-100 md:ml-12 md:mr-3 lg:mr-8 transition-color hover:text-indigo-600">HOME</a>
                 <a href="#features" class="mr-0 font-bold duration-100 md:mr-3 lg:mr-8 transition-color hover:text-indigo-600">FEATURES</a>
-                <a href="#pricing" class="mr-0 font-bold duration-100 md:mr-3 lg:mr-8 transition-color hover:text-indigo-600">PRICING</a>
+                <a href="/prodcut/pricing" class="mr-0 font-bold duration-100 md:mr-3 lg:mr-8 transition-color hover:text-indigo-600">PRICING</a>
                 <a href="#qna" class="font-bold duration-100 transition-color hover:text-indigo-600">Q&A</a>
                 <div class="flex flex-col block w-full font-medium border-t border-gray-200 md:hidden">
                     <c:if test="${userSession.userid != null }">
@@ -164,7 +164,7 @@
                 <p class="pr-0 mb-8 text-base text-gray-600 sm:text-lg xl:text-xl lg:pr-20">원격지의 PC 자원들을 보다 효율적으로 관리/모니터링 할 수 있는 클라우드 서비스를 사용해보세요 :)</p>
                 <c:choose>
                     <c:when test='${userSession.domain == "" or userSession.domain == null  }' >
-                        <a href="/#pricing" class="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-indigo-600 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0"> 시작하기</a>
+                        <a href="/prodcut/pricing" class="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-indigo-600 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0"> 시작하기</a>
                     </c:when>
 
                     <c:otherwise>
@@ -417,10 +417,11 @@
 
         <div id="pricing" class="container flex flex-col items-center h-full max-w-6xl mx-auto">
             <h2 class="my-5 text-base font-medium tracking-tight text-indigo-500 uppercase">Pricing</h2>
-            <h3
-                class="w-full max-w-2xl px-5 px-8 mt-2 text-2xl font-black leading-tight text-center text-gray-900 sm:mt-0 sm:px-0 sm:text-6xl md:px-0">합리적인 가격으로 <br> 하모나이즈를 바로 <br>만나보세요! </h3>
+            <h3 class="w-full max-w-2xl px-5 px-8 mt-2 text-2xl font-black leading-tight text-center text-gray-900 sm:mt-0 sm:px-0 sm:text-6xl md:px-0">
+                합리적인 가격으로 <br> 하모나이즈를 바로 <br>만나보세요!
+            </h3>
 
-            <div class="max-w-full mx-auto md:max-w-6xl sm:px-8">
+            <%-- <div class="max-w-full mx-auto md:max-w-6xl sm:px-8">
                 <!-- Basic Pricing -->
                 <div class="relative flex flex-col items-center block sm:flex-row">
                     <div
@@ -601,7 +602,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --%>
 
         </div>
 

@@ -17,7 +17,6 @@ import com.hamonize.admin.paging.PagingVo;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +31,7 @@ public class User extends PagingVo {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Comment("시퀀스 번호")
-	private String seq;
+	private int seq;
 
 	@Size(max=50)
 	@Comment("도메인 명")

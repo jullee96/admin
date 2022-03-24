@@ -389,6 +389,58 @@
       }
     });
 
+    $("#user-detail-form").validate({
+      onkeyup: function(element) {
+        $(element).valid(); 
+      },
+      rules: {
+        username: {
+          required: true,
+          minlength: 2
+        },
+
+        passwd: {
+          // required: true,
+          minlength: 4
+        },
+       
+        email: {
+          required: true,
+          email: true
+        },
+        businessNumber: {
+          checkComNo: true
+         } 
+      },
+      messages: {
+        username: {
+          required: "이름을 입력해주세요",
+          minlength: "이름은 최소 2글자로 입력해주세요"
+        },
+        
+        passwd: {
+          // required: "새 비밀번호를 입력해주세요",
+          minlength: "비밀번호는 최소 4자리로 입력해주세요"
+        },
+        
+        email: {
+          required: "이메일을 입력해주세요",
+          email: "유효한 이메일이 아닙니다"
+        },
+        businessNumber: {
+          checkComNo : "유효하지 않은 사업지 번호입니다. 다시 확인해주세요."
+        }
+      },
+      errorPlacement: function(label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      highlight: function(element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
 
 
     //code to hide topic selection, disable for demo

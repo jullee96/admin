@@ -1,10 +1,10 @@
-package com.hamonize.portal;
+package com.hamonize.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PortalApplicationTests {
+class AdminApplicationTests {
 
 	@Test
 	void contextLoads() {

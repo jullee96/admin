@@ -12,6 +12,9 @@
 
 </head>
 <%@ include file="../template/top2.jsp" %>
+<link rel="stylesheet" href="/dist/themes/proton/style.min.css" />
+<link rel="stylesheet" href="/dist/themes/default/style.min.css" />
+<script src="/dist/jstree.min.js"></script>
 
 <style>
 /*--------------------
@@ -93,10 +96,11 @@
             <div class="avatar avatar-xl position-relative">
               <!-- button trigger modal -->
               <c:if test="${profileImg != null}" >
-                <img src="/user/images" class="border-radius-md detailProfileImg" > 
+                <img src="/user/images?userid=${user.userid}" class="border-radius-md detailProfileImg" > 
               </c:if>
               <c:if test="${profileImg == null}">
-                <img src="/img/user.svg" class="border-radius-md detailProfileImg">  
+                <img src="../argon/assets/img/logos/img_profile.png" class="border-radius-md detailProfileImg">  
+
               </c:if>
               <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
                 <i class="fa fa-pen top-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" aria-hidden="true" data-bs-original-title="이미지 변경" aria-label="Edit Image"></i><span class="sr-only">Edit Image</span>
@@ -127,7 +131,7 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">닫기</button>
-                      <button type="button" class="btn bg-gradient-primary" onclick="uploadFile('img')">수정</button>
+                      <button type="button" class="btn bg-gradient-primary" onclick="uploadFile('img','${user.userid}')">수정</button>
                     </div>
                   </div>
                 </div>
@@ -143,35 +147,58 @@
                 ${user.username}
               </h5>
               <p class="mb-0 font-weight-bold text-sm">
+              <input type="hidden" id="domain" value="${user.domain}">
                 ${user.domain}
               </p>
             </div>
           </div>
- 
+          <!--- tab menu --->
+
+          <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+            <div class="nav-wrapper position-relative end-0">
+              <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center active" data-bs-toggle="tab" href="#div-user" role="tab" data-load="true" aria-selected="true">
+                    <i class="ni ni-circle-08"></i>
+                    <span class="ms-2">회원정보</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center" data-bs-toggle="tab" href="#div-domain" role="tab" data-load="false" aria-selected="false">
+                    <i class="ni ni-world-2"></i>
+                    <span class="ms-2">도메인 정보</span>
+                  </a>
+                </li>
+                
+            </div>
+          </div>
+          <!--- end tab menu --->
         </div>
 
       </div>
     </div>
 
-    <form id="user-form" action="/user/update" method="POST">
-      <div class="container-fluid py-4">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header pb-0">
-                <div class="d-flex align-items-center">
-                  <p class="mb-0">회원정보 수정 </p>
-                    <a href="/user/list" class="btn btn-secondary btn-sm ms-auto">목록으로</a>
-                    <button type="submit" class="btn btn-danger btn-sm " style="margin-left:1%">수정하기</button>
+    <form id="user-detail-form" action="/user/update" method="POST" >
+      <div class="tab-content">
+        <!-- 회원정보 -->
+        <div id ="div-user" class="tab-pane in active container-fluid py-4 ">
+          <div class="row">
+            <div class="col-md-12">
+              <div id="user-info" class="card">
+                <div class="card-header pb-0">
+                  <div class="d-flex align-items-center">
+                    <p class="mb-0">회원정보 수정 </p>
+                      <a href="/user/list" class="btn btn-secondary btn-sm ms-auto">목록으로</a>
+                      <button type="submit" class="btn btn-danger btn-sm " style="margin-left:1%">수정하기</button>
+                  </div>
                 </div>
-              </div>
-              <div class="card-body">
+                <div class="card-body">
                 <p class="text-uppercase text-sm">회원 정보</p>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group">
                       <label for="example-text-input" class="form-control-label">아이디</label>
-                      <input class="form-control" type="text" value="${user.userid}" disabled>
+                      <input class="form-control" type="text" id="userid" value="${user.userid}" disabled>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -186,25 +213,15 @@
                       <input class="form-control" id="email" name="email" type="email" value="${user.email}" >
                     </div>
                   </div>
-                  <div class="col-md-12">
-                    <div class="form-group">
-                      <label for="example-text-input" class="form-control-label">이전 비밀번호 확인</label>
-                      <input class="form-control" id="before_passwd" name="before_passwd" type="password" value="">
-                    </div>
-                  </div>
+                  
 
-                  <div class="col-md-6">
+                  <div class="col-md-12">
                     <div class="form-group">
                       <label for="example-text-input" class="form-control-label">비밀번호 변경</label>
                       <input class="form-control" id="passwd" name="passwd" type="password" value="">
                     </div>
                   </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="example-text-input" class="form-control-label">비밀번호 변경 확인</label>
-                      <input class="form-control" id="re_passwd" name="re_passwd" type="password" value="">
-                    </div>
-                  </div>
+                  
                 </div>
                 
                 <hr class="horizontal dark">
@@ -235,21 +252,142 @@
                 </div>
                 
               </div>
+              
 
 
+              </div>
             </div>
           </div>
-          
         </div>
-        <!-- footer -->
-        <%@ include file="../template/footer.jsp" %>
-      </div>
+        <!-- end of 회원정보 -->
         
+        <!-- 도메인 정보 -->
+        <div id ="div-domain" class="tab-pane container-fluid py-4">
+          <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header pb-0">
+                    <p class="mb-0">구독 정보 </p>
+                    <p class="mt-2 text-uppercase text-sm">구독 중인 상품</p>
+                     FREE 
+
+                  </div>  
+                  <div class="card-body pb-0">
+                  </div>
+
+                </div>
+            </div>  
+          </div>
+          <div class="row mt-4">
+            <!-- 조직도 정보 -->
+            <div class="col-md-3">
+              <div class="card">
+                <div class="card-header pb-0">
+                  <div class="d-flex align-items-center">
+                    <p class="mb-0">도메인 </p>
+                      <div class="d-flex align-items-end" >
+                        <a class="ms-4 text-xs" href="javascript:fnCloseAll();"> [ - 닫기 ]</a>
+                        <a class="ms-2 text-xs" href="javascript:fnOpenAll();"> [ + 열기 ]</a>
+                      </div>
+                  </div>
+                </div>
+                <div class="row card-body ">
+                  <div class="ms-3 col-md-4">
+                    <div id="jstree"></div>
+                  </div>
+                </div>
+              </div>  
+            </div>
+            <!-- end of 조직도 정보 -->
+
+
+            <!-- 도메인 상세정보 -->
+            <div class="col-md-9">
+              <div class="card">
+                <div class="card-header pb-0">
+                  <div class="d-flex align-items-center">
+                    <p class="mb-0">상세정보 </p>
+                  </div>
+                </div>
+                <div class="card-body pb-0">
+
+                </div>
+
+              </div>
+            </div>
+            <!-- end of 도메인 상세정보 -->
+
+          </div>
+
+        </div>
+        <!--end of  도메인 정보 -->
+      </div>
+      <!-- end of tab content -->
     </form>
+    <%@ include file="../template/footer.jsp" %>
+ 
 </div>
   
 </body>
+<%@ include file="../template/core.jsp" %>
+
 <script>
+$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+  console.log("show");
+});
+
+
+$('a[data-toggle="tab"]').on('hide.bs.tab', function (e) {
+  console.log("hide");
+});
+
+var userid = $("#userid").val();
+var domain = $("#domain").val();
+console.log("domain >> "+domain);
+
+$('#jstree').jstree({
+    plugins: ["dnd", "state", "types", "search","themes","wholerow"] , 
+    core: {
+      themes: {
+            'name': 'proton',
+            'responsive': true
+      },
+      check_callback: true,
+      data : {
+        url : "/user/getOrg?domain="+domain,
+        dataType : "json"
+      }
+      
+    },
+    types:{
+      "root" : {
+        "icon" : "ni ni-world-2 text-info"
+      },
+      "default" : {
+        "icon" : "fa fa-flag fa-xs text-success" 
+      }
+    }
+
+})
+.bind('move_node.jstree', function (evt, data) { 
+    // console.log("nodeId : " + data.node.id);
+    // console.log("parentId : " + data.node.parent);
+    // console.log("position : " + data.position);
+    // console.log("oldParendId : " + data.old_parent);
+    // console.log("oldPosition : " + data.old_position);    
+})
+.bind('select_node.jstree', function(event, data){
+    var id = data.instance.get_node(data.selected).id;        //id 가져오기
+    console.log("id = >"+id );
+});
+
+function fnOpenAll(){
+  $("#jstree").jstree("open_all");
+}  
+
+function fnCloseAll(){
+  $("#jstree").jstree("close_all");
+}  
 
 function checkNumber(event) {
   if(event.key === '.' 
@@ -269,8 +407,7 @@ $(document).on("keyup", "#businessNumber", function() {
 
 
 $(document).ready(function () {
-  $("#user-form").validate({
-    // ignore: "",
+  $("#user-detail-form").validate({
     submitHandler: function(form) {
         form.submit();
     }  
@@ -302,7 +439,7 @@ $(document).on('change', '.file-input', function() {
     }
 });
 
-function uploadFile(keytype){
+function uploadFile(keytype, userid){
   var InputFiles;
 
   InputFiles = $("#file-input")[0];
@@ -321,6 +458,7 @@ function uploadFile(keytype){
   var formData = new FormData();
   formData.append("keyfile", InputFiles.files[0]);
   formData.append("keytype", keytype);
+  formData.append("userid", userid);
 
   $.ajax({
       type:"POST",
@@ -345,7 +483,5 @@ function uploadFile(keytype){
 }
 
 </script>
-
-<%@ include file="../template/core.jsp" %>
 
 </html>

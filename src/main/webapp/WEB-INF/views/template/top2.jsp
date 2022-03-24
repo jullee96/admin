@@ -32,7 +32,7 @@
     </a>
     <ul class="navbar-nav justify-content-end">
       <li class="nav-item dropdown pe-2 d-flex align-items-center">
-        <a href="/user/detail?userid=admin4 " class="nav-link text-black p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        <a href="/user/detail?userid=${userSession.userid} " class="nav-link text-black p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
           ${userSession.username} 님 &nbsp;&nbsp; <i class="fa fa-bell cursor-pointer" aria-hidden="true">   </i>
         </a>
 
@@ -42,7 +42,7 @@
               <div class="d-flex py-1">
                 <div class="my-auto">
                 
-                  <img src="/img/user.svg" class="avatar avatar-sm me-3">  
+                  <img src="/img/img_profile.png" class="avatar avatar-sm me-3">  
                 </div>
                 <div class="d-flex flex-column justify-content-center">
                   <h6 class="text-sm font-weight-normal mb-1">

@@ -72,25 +72,17 @@
                             </div>
                             
                             <div class="card-body text-lg-start text-center pt-0">
-                                <div id="viewer" class="ms-3 d-flex justify-content-lg-start justify-content-center p-2">
-                                    설명을 입력해주세요
+                                 <div class="row">
+                                <div id="viewer" class="ms-3"> 
                                 </div>
+                                </div>
+                                 <div class="row">
                                 <div id="feats"></div>
-                                <%-- <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
-                                        <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                    <div>
-                                        <span id="view_feat_1" class="ps-3">입력해주세요</span>
-                                    </div>
-                                </div> --%>
-
-
-                                
                                 <a href="javascript:;" class="btn btn-icon btn-dark d-lg-block mt-3 mb-0">
                                     선택하기
                                     <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
                                 </a>
+                                </div>
                             </div>
                             </div>
                         </div>
@@ -113,14 +105,14 @@
   <%-- <%@ include file="../template/core.jsp" %> --%>
 
 </body>
-
 <script>
-const Viewer = toastui.Editor;
-const viewer = new Viewer({ 
-    el: document.querySelector('#viewer'), 
-    height: '100px', 
-    initialValue: content   
+
+const viewer = toastui.Editor.factory({
+    el: document.querySelector('#viewer'),
+    viewer: true,
+    height: '100px',
+    initialValue: "설명을 입력해주세요"
 });
 
-</script>
+    </script>
 </html>

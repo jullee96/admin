@@ -27,64 +27,6 @@
       <div class="ms-md-auto pe-md-3 d-flex align-items-center">
         
       </div>
-
-      <%-- <ul class="navbar-nav justify-content-end">
-        
-        <li class="nav-item dropdown pe-2 d-flex align-items-center">
-          <a href="/user/detail?userid=${userSession.userid} " class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            ${userSession.username} 님 &nbsp;&nbsp; <i class="fa fa-bell cursor-pointer">   </i>
-          </a>
-
-          <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
-            <li class="mb-2">
-              <a class="dropdown-item border-radius-md" href="/user/detail">
-                <div class="d-flex py-1">
-                  <div class="my-auto">
-                  
-                    <img src="/img/user.svg" class="avatar avatar-sm me-3">  
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="text-sm font-weight-normal mb-1">
-                      <span class="font-weight-bold">관리자 정보 수정</span> 
-                    </h6>
-                    
-                  </div>
-                </div>
-              </a>
-            </li>
-            <li class="mb-2">
-              <a class="dropdown-item border-radius-md" href="/login/logout">
-                <div class="d-flex py-1">
-                  <div class="my-auto">
-                    <i class="ni ni-button-power avatar avatar-sm bg-gradient-dark me-3"></i>
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="text-sm font-weight-normal mb-1">
-                      <span class="font-weight-bold">로그아웃</span> 
-                    </h6>
-                    
-                  </div>
-                </div>
-              </a>
-            </li>
-            
-          </ul>
-
-        </li>
-        
-        <li class="nav-item d-xl-none ps-3 pe-0 d-flex align-items-center">
-          <a href="javascript:;" class="nav-link text-white p-0">
-            </a><a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
-              <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line bg-white"></i>
-                <i class="sidenav-toggler-line bg-white"></i>
-                <i class="sidenav-toggler-line bg-white"></i> 
-              </div>
-            </a>
-        </li>
-
-      </ul> --%>
-
     </div>
   </div>
 </nav> 

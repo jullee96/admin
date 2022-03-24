@@ -3,7 +3,6 @@
 <script src="../argon/assets/js/core/bootstrap.min.js"></script>
 <script src="../argon/assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../argon/assets/js/plugins/smooth-scrollbar.min.js"></script>
-<%-- <script src="../argon/assets/js/plugins/multistep-form.js"></script> --%>
 
   <script>
     var win = navigator.platform.indexOf('Win') > -1;

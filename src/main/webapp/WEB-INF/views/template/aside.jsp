@@ -125,6 +125,13 @@ function gotoUrl(url){
             <span class="nav-link-text ms-1 text-sm">상품등록</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/product/pricing">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            </div>
+            <span class="nav-link-text ms-1 text-sm">결과화면</span>
+          </a>
+        </li>
         
 
         <%-- <li class="nav-item">
