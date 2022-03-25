@@ -123,7 +123,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             user.setEmail(attributes.getEmail());
             user.setPicture(attributes.getPicture());
             user.setRole("ROLE_ADMIN");
-            user.setRgstrDate(LocalDateTime.now());
+            user.setRgstrdate(LocalDateTime.now());
             user.setPasswd("");
 
             if(registrationId.equals("google")){

@@ -270,7 +270,6 @@
                     <p class="mb-0">구독 정보 </p>
                     <p class="mt-2 text-uppercase text-sm">구독 중인 상품</p>
                      FREE 
-
                   </div>  
                   <div class="card-body pb-0">
                   </div>
@@ -291,7 +290,7 @@
                       </div>
                   </div>
                 </div>
-                <div class="row card-body ">
+                <div class="mt-n2 row card-body ">
                   <div class="ms-3 col-md-4">
                     <div id="jstree"></div>
                   </div>
@@ -310,7 +309,12 @@
                   </div>
                 </div>
                 <div class="card-body pb-0">
-
+                <p class="mt-n2 text-uppercase text-sm">총 등록 PC 대수</p>
+                  <fmt:formatNumber value="${totalPcCnt}" pattern="#,###" /> <small>대</small>
+                    <div id="plist"></div>                
+                  <%-- <c:forEach items="${subPcList}" var="list" varStatus="status">
+                    ${list.seq}
+                  </c:forEach> --%>
                 </div>
 
               </div>
@@ -365,6 +369,9 @@ $('#jstree').jstree({
       },
       "default" : {
         "icon" : "fa fa-flag fa-xs text-success" 
+      },
+      "pc":{
+        "icon" : "fa fa-desktop fa-xs text-secondary" 
       }
     }
 
@@ -379,6 +386,27 @@ $('#jstree').jstree({
 .bind('select_node.jstree', function(event, data){
     var id = data.instance.get_node(data.selected).id;        //id 가져오기
     console.log("id = >"+id );
+
+    $.ajax({
+        type:"POST",
+        url: "/user/getPcDetail",
+        data: {
+          orgseq : id,
+          domain : domain
+
+        },
+      success: function(ret){
+        $("#plist").empty();
+        for(let i=0;i<ret.length;i++){
+          console.log(ret[i]);
+           $("#plist").append("<p>"+ret[i].pchostname+"</p>");
+        }
+
+      },
+      err: function(err){
+        console.log("err:", err)
+      }
+    });
 });
 
 function fnOpenAll(){
@@ -390,9 +418,7 @@ function fnCloseAll(){
 }  
 
 function checkNumber(event) {
-  if(event.key === '.' 
-     || event.key === '-'
-     || event.key >= 0 && event.key <= 9) {
+  if(event.key === '.' || event.key === '-' || event.key >= 0 && event.key <= 9) {
     return true;
   }
   
@@ -420,9 +446,6 @@ $(document).on('change', '.file-input', function() {
     var filesCount = $(this)[0].files.length;
     var textbox = $(this).prev();
     const maxSize = 1048576;
-    console.log("filesCount >  "+ filesCount);
-
-    console.log("size : "+ this.files[0].size);
 
     if (filesCount === 1) {
       if( maxSize > this.files[0].size ){
@@ -433,7 +456,6 @@ $(document).on('change', '.file-input', function() {
         return;
       }
 
-     
     } else {
       textbox.text('선택된 파일이 없습니다');
     }
@@ -445,11 +467,6 @@ function uploadFile(keytype, userid){
   InputFiles = $("#file-input")[0];
   var filename =  $("#file-input").val().split('\\').pop();
 
-  console.log("keytype > "+keytype);
-  console.log("InputFiles > "+InputFiles);
-  console.log("InputFiles > "+InputFiles.files[0]);
-  console.log("filename > "+filename);
-  
   if(InputFiles.files.length === 0){
       alert("파일을 선택해주세요");
     return;

@@ -1,8 +1,6 @@
 package com.hamonize.admin.pcmangr;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +30,15 @@ public class Pcmangr {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("pc 시퀀스 번호")
     private Long seq;
+
+    @Column(name = "org_seq")
+    private Long orgseq;
+
+    @Column(name = "pc_hostname")
+    private String pchostname;
+    
+    @Column(name = "pc_os")
+    private String pcos;
     
     @Column(name = "rgstr_date")
     private LocalDateTime rgstrdate;
@@ -40,5 +47,7 @@ public class Pcmangr {
     private LocalDateTime updtdate;
 
     @Transient
-    private String viewDate;
+    private String viewdate;
+
+
 }

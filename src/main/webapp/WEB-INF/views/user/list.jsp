@@ -106,7 +106,7 @@
                             </div>                        
                           </td>
                         <td class="text-xs font-weight-bold">
-                          <span class="my-2 text-xs">${list.viewDate}</span>
+                          <span class="my-2 text-xs">${list.viewdate}</span>
                         </td>
 
                       </tr>

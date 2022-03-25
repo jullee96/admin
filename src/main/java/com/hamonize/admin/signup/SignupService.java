@@ -26,7 +26,7 @@ public class SignupService {
         vo.setPasswd(SHA256Util.getEncrypt(vo.getPasswd(), salt));
         vo.setSalt(salt);
         vo.setRole("ROLE_GUEST");
-        vo.setRgstrDate(LocalDateTime.now());
+        vo.setRgstrdate(LocalDateTime.now());
         
         return sr.save(vo);
 	}

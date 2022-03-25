@@ -74,7 +74,7 @@ public class UserController {
         List<User> ulist = new ArrayList<>();
 
         for (User el : list) {
-            el.setViewDate(el.getRgstrDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            el.setViewdate(el.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
             el.setStatus(el.getStatus().trim());
             ulist.add(el);
             
@@ -95,10 +95,14 @@ public class UserController {
        vo = ur.findByUserid(vo.getUserid()).get();
 
        Company newComVo = cr.findByUserid(vo.getUserid());
+       List<Pcmangr> pcList = pcr.findByDomain(vo.getDomain());
 
        model.addAttribute("user", vo);
        model.addAttribute("companyInfo", newComVo);
+       model.addAttribute("totalPcCnt", pcList.size());
 
+       model.addAttribute("pcList", pcList);
+       
        FileVO file = fr.findBySeqAndKeytype(vo.getSeq(), "img");
 
        try {
@@ -197,45 +201,91 @@ public class UserController {
         logger.info("------ get doamin -----");
         logger.info("domain >> {}", ovo.getDomain());
  
-        List<Org> orgList = or.findByDomain(ovo.getDomain());
+        List<Org> orgList = or.findByDomainOrderBySeq(ovo.getDomain());
         List<Object> treeList = new ArrayList <>();
-        Map<String, Object> root = new HashMap <String, Object>();
-        Map <String, Boolean> rootState = new HashMap <String, Boolean> ();
-        
-
+        List<Pcmangr> pcList = pcr.findByDomain(ovo.getDomain());
+        int i=1;
         for( Org el : orgList){
-            logger.info("org >> {}", el.getOrgnm());
             Map<String, Object> tree = new HashMap <String, Object>();
+            Map<String, Object> pctree = new HashMap <String, Object>();
+            
             Map <String, Boolean> state = new HashMap <String, Boolean> ();
             
-            root.put("id", 0);
-            // root.put("parent", "#");
-            root.put("text", "root");
-            rootState.put("opened", true);
-            root.put("state", rootState);
-            // treeList.add(root);
-
-            tree.put("id", el.getSeq());
             if(el.getSeq() == 1 ){
+                tree.put("id", el.getSeq());
                 tree.put("parent", "#");
                 tree.put("type", "root");
+                tree.put("text", el.getOrgnm());
+            
             }else{
+                tree.put("id", el.getSeq());
                 tree.put("parent", el.getPseq());
                 tree.put("type", "default");
-
+                tree.put("text", el.getOrgnm());
+           
             }
-            tree.put("text", el.getOrgnm());
+
+
             state.put("opened", true);
             tree.put("state", state);
             treeList.add(tree);
+
+
+            for(Pcmangr pel:  pcList){
+                if( tree.get("id") == pel.getOrgseq()){
+                    pctree.put("id", orgList.size()+i);
+                    pctree.put("parent", pel.getOrgseq());
+                    pctree.put("type", "pc");
+                    pctree.put("text", pel.getPchostname());
+                    pctree.put("opened", false);
+                    pctree.put("state", state);
+                    treeList.add(pctree);
+                    i++;
+                }
+            }
         }
         
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(treeList);
-        logger.info("jsonString >> {}",jsonString);
+        // logger.info("jsonString >> {}",jsonString);
         
         return jsonString;        
 	}
 
+
+    @RequestMapping("/getPcDetail")
+    @ResponseBody
+    public List<Pcmangr> getPcDetail(Org ovo, Pcmangr pvo , HttpSession session, Model model)  throws IOException {
+        logger.info("getDomain >> {}",pvo.getDomain());
+        logger.info("orgseq >> {}",pvo.getOrgseq());
+
+
+        ovo.setChild(or.findSubOrgs(pvo.getDomain(), pvo.getOrgseq()));
+        List <Pcmangr> subPcList = new ArrayList<>();
+        List <Pcmangr> pList = new ArrayList<>();
+            
+        if(pcr.getByDomainAndOrgseq(pvo.getDomain(),pvo.getOrgseq())!= null){
+            subPcList.add(pcr.getByDomainAndOrgseq(pvo.getDomain(),pvo.getOrgseq()));
+        }
+
+        for(Long el : ovo.getChild()){
+            logger.info("el >> {}",el);
+            Pcmangr pc = pcr.getByDomainAndOrgseq(pvo.getDomain(),el);
+            if(pc != null){
+                subPcList.add(pc);
+            }
+        }
+
+        for(Pcmangr pc : subPcList){
+            pc.setViewdate(pc.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            pList.add(pc);
+        }
+ 
+        
+        
+        return pList;        
+	}
+
+    
 
 }

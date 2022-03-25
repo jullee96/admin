@@ -66,10 +66,10 @@ public class User extends PagingVo {
 	private String status;
 	
 	@Column(name = "rgstr_date")
-	private LocalDateTime rgstrDate;
+	private LocalDateTime rgstrdate;
 
 	@Column(name = "updt_date")
-	private LocalDateTime updtDate;
+	private LocalDateTime updtdate;
 	
     @Transient
 	@Column(name="login_check",columnDefinition = "integer default 0")
@@ -85,7 +85,7 @@ public class User extends PagingVo {
 	private String picture;
 
     @Transient
-	private String viewDate;
+	private String viewdate;
 	
 
 }

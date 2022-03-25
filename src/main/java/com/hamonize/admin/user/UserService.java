@@ -32,7 +32,7 @@ public class UserService {
         }
 
         
-        vo.setUpdtDate(LocalDateTime.now()); 
+        vo.setUpdtdate(LocalDateTime.now()); 
         ur.save(vo);
 
 
