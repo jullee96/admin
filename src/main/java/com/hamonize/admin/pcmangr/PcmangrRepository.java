@@ -23,6 +23,10 @@ public interface PcmangrRepository extends JpaRepository<Pcmangr,String>{
     )
     Pcmangr getByDomainAndOrgseq(@Param("domain") String domain, @Param("orgseq") Long orgseq);
 
+    List<Pcmangr> findAllByDomainAndSeq(String domain, Long seq);
+
+    List<Pcmangr> findAllByDomainAndOrgseq(String domain, Long orgseq);
+
     // Pcmangr findByDomainAndOrgseq(String domain, Long orgseq);
 
     

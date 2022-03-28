@@ -5,7 +5,6 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.apache.ibatis.annotations.Param;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
    
     @Modifying
     @Query(
-        value = "UPDATE tbl_admin_user SET pass_wd = :#{#user.passwd} , salt = :#{#user.salt} , updt_date = :#{#user.updtDate} WHERE user_id = :#{#user.userid} " , nativeQuery = true
+        value = "UPDATE tbl_admin_user SET pass_wd = :#{#user.passwd} , salt = :#{#user.salt} , updt_date = :#{#user.updtdate} WHERE user_id = :#{#user.userid} " , nativeQuery = true
     )
     public void updatePasswd(@Param("user") User user);
     
@@ -45,5 +44,11 @@ public interface UserRepository extends JpaRepository<User, Long>{
     public Page<User> findByRoleNot(org.springframework.data.domain.Pageable pageable, String string);
     public Long countByRoleNot(String string);
     public Long countByDomainNotNull();
+    
+    @Modifying
+    @Query(
+        value = "UPDATE tbl_admin_user SET status = :#{#user.status} , updt_date = :#{#user.updtdate} WHERE user_id = :#{#user.userid} " , nativeQuery = true
+    )
+    public void updateStatus(@Param("user") User user);
 
 }

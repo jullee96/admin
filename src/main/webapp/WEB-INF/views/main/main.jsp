@@ -222,7 +222,8 @@
                             <span class="text-sm">
                               기술문의
                             </span>
-                          </c:if><c:if test='${list.type eq "E"}' >
+                          </c:if>
+                          <c:if test='${list.type eq "E"}' >
                             <div style="display:inline;" class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
                               <i class="ni ni-app opacity-10"></i>
                             </div>
@@ -230,8 +231,6 @@
                               기타문의
                             </span>
                           </c:if>
-                        
-
                     </td>
                     <td class="w-40">
                         <div class="ms-4">

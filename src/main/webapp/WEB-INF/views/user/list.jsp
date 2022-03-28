@@ -95,12 +95,12 @@
                         <td class="text-xs font-weight-bold">
                             <div class="d-flex align-items-center">
                               <c:if test="${list.status == 'A'}">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-check" aria-hidden="true"></i></button>
+                                <button type="button" onclick="fnUserDisable('${list.userid}','D');" class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-check" aria-hidden="true"></i></button>
                                 <span>활성</span>
 
                               </c:if>
                               <c:if test="${list.status != 'A'}">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                <button type="button" onclick="fnUserDisable('${list.userid}','A');" class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 <span>비활성</span>
                               </c:if>
                             </div>                        
@@ -173,5 +173,52 @@
 </body>
 
 <%@ include file="../template/core.jsp" %>
+<script>
 
+function fnUserDisable(userid, at){
+  if(at == 'A'){ // 활성화
+      if(confirm(userid+"님을 활성화하시겠습니까?")){
+        $.ajax({
+          type:"POST",
+            url: "/user/enable",
+            data: {
+              userid : userid
+            },
+            success: function(retval){
+              if(retval!="F"){
+                alert("회원 로그인 활성화 완료!");
+                location.reload();
+              }else{
+                alert("회원 로그인 활성화 실패");
+                location.reload();
+              }
+            }
+
+        });
+     }
+  } else if(at == 'D'){ // 비활성화
+      if(confirm(userid+"님을 비활성화 처리하시겠습니까?")){
+        $.ajax({
+          type:"POST",
+            url: "/user/disable",
+            data: {
+              userid : userid
+            },
+            success: function(retval){
+              if(retval!="F"){
+                alert("회원 로그인 비활성화 완료!");
+                location.reload();
+              }else{
+                alert("회원 로그인 비활성화 실패");
+                location.reload();
+              }
+            }
+
+        });
+     }
+  }
+
+
+}
+</script>
 </html>

@@ -3,6 +3,8 @@ package com.hamonize.admin.user;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ import com.hamonize.admin.org.OrgRepository;
 import com.hamonize.admin.pcmangr.Pcmangr;
 import com.hamonize.admin.pcmangr.PcmangrRepository;
 import com.hamonize.admin.util.SHA256Util;
+import com.sun.source.tree.Tree;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -163,7 +166,7 @@ public class UserController {
         FileVO file = fr.findByUseridAndKeytype(userid, "img");
          
         try {
-            StringBuilder sb =new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             
             if(file.getFilepath().contains("://")){
                 sb = new StringBuilder(file.getFilepath());
@@ -199,16 +202,14 @@ public class UserController {
     @ResponseBody
     public String getDomain(Org ovo, Pcmangr pvo , HttpSession session, Model model)  throws IOException {
         logger.info("------ get doamin -----");
-        logger.info("domain >> {}", ovo.getDomain());
- 
         List<Org> orgList = or.findByDomainOrderBySeq(ovo.getDomain());
         List<Object> treeList = new ArrayList <>();
         List<Pcmangr> pcList = pcr.findByDomain(ovo.getDomain());
-        int i=1;
+        int i = 1;
+    
         for( Org el : orgList){
             Map<String, Object> tree = new HashMap <String, Object>();
-            Map<String, Object> pctree = new HashMap <String, Object>();
-            
+            // Map<String, Object> pctree = new HashMap <String, Object>();
             Map <String, Boolean> state = new HashMap <String, Boolean> ();
             
             if(el.getSeq() == 1 ){
@@ -216,76 +217,143 @@ public class UserController {
                 tree.put("parent", "#");
                 tree.put("type", "root");
                 tree.put("text", el.getOrgnm());
-            
             }else{
                 tree.put("id", el.getSeq());
                 tree.put("parent", el.getPseq());
                 tree.put("type", "default");
                 tree.put("text", el.getOrgnm());
-           
             }
 
 
             state.put("opened", true);
             tree.put("state", state);
             treeList.add(tree);
-
-
+           
             for(Pcmangr pel:  pcList){
+                Map<String, Object> pctree = new HashMap <String, Object>();
+            
                 if( tree.get("id") == pel.getOrgseq()){
+                    
+                    Map<String, Object> attr = new HashMap <String, Object>();
+                    attr.put("data_quantity", pel.getSeq());
+
                     pctree.put("id", orgList.size()+i);
+                    pctree.put("a_attr", attr);
                     pctree.put("parent", pel.getOrgseq());
                     pctree.put("type", "pc");
                     pctree.put("text", pel.getPchostname());
-                    pctree.put("opened", false);
-                    pctree.put("state", state);
+
                     treeList.add(pctree);
                     i++;
                 }
+            
             }
+
+            // logger.info("pctree > {}\n\n\n",pctree.get("id"));
+            
         }
+
         
+
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(treeList);
         // logger.info("jsonString >> {}",jsonString);
-        
+
         return jsonString;        
 	}
 
 
     @RequestMapping("/getPcDetail")
     @ResponseBody
-    public List<Pcmangr> getPcDetail(Org ovo, Pcmangr pvo , HttpSession session, Model model)  throws IOException {
-        logger.info("getDomain >> {}",pvo.getDomain());
+    public List<Pcmangr> getPcDetail(@RequestParam("type") String type ,Org ovo, Pcmangr pvo , HttpSession session, Model model)  throws IOException {
+        logger.info("\n\n\n\ngetDomain >> {}",pvo.getDomain());
         logger.info("orgseq >> {}",pvo.getOrgseq());
-
+        logger.info("type >> {}",type);
 
         ovo.setChild(or.findSubOrgs(pvo.getDomain(), pvo.getOrgseq()));
         List <Pcmangr> subPcList = new ArrayList<>();
         List <Pcmangr> pList = new ArrayList<>();
-            
-        if(pcr.getByDomainAndOrgseq(pvo.getDomain(),pvo.getOrgseq())!= null){
-            subPcList.add(pcr.getByDomainAndOrgseq(pvo.getDomain(),pvo.getOrgseq()));
-        }
-
-        for(Long el : ovo.getChild()){
-            logger.info("el >> {}",el);
-            Pcmangr pc = pcr.getByDomainAndOrgseq(pvo.getDomain(),el);
-            if(pc != null){
-                subPcList.add(pc);
-            }
-        }
-
-        for(Pcmangr pc : subPcList){
-            pc.setViewdate(pc.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
-            pList.add(pc);
-        }
- 
         
+        if(type.equals("pc")){
+            subPcList = pcr.findAllByDomainAndSeq(pvo.getDomain(), pvo.getSeq());
+            for(Pcmangr pc : subPcList){
+                pc.setViewdate(pc.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                pList.add(pc);
+            }
+
+        }else{ // root, default
+            
+            // 자신의 노드 밑에 있는  pc 검색
+            if( !pcr.findAllByDomainAndOrgseq(pvo.getDomain(),pvo.getOrgseq()).isEmpty() ){
+                for( Pcmangr e :  pcr.findAllByDomainAndOrgseq(pvo.getDomain(),pvo.getOrgseq())){
+                    subPcList.add(e);
+                }
+            }
+
+            //하위 노드가 있다면 해당 노드들의 pc리스트 검색
+            for(Long el : ovo.getChild()){ 
+                List <Pcmangr> pcs = pcr.findAllByDomainAndOrgseq(pvo.getDomain(),el);
+                
+                for(Pcmangr pc : pcs){
+                    if(pc != null){
+                        subPcList.add(pc);
+                    }
+                }
+                            
+            }
+            logger.info("==================== ");
+
+
+            for(Pcmangr pc : subPcList){
+                logger.info("pc seq : {}" ,pc.getSeq());
+                logger.info("pc hostname : {}" ,pc.getPchostname());
+
+                pc.setViewdate(pc.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+                pList.add(pc);
+            }
+    
+        }
         
         return pList;        
 	}
 
-    
+    @RequestMapping("/disable")
+    @ResponseBody
+    public String disable(User vo , HttpSession session, Model model)   {
+        String retval="";
+        
+        logger.info("userid > {}",vo.getUserid());
+        vo.setUpdtdate(LocalDateTime.now());
+        vo.setStatus("IA");
+        try {
+            ur.updateStatus(vo);     
+            retval = "S";
+        } catch (Exception e) {
+            logger.info("status update error",e );
+            retval="F";
+        }
+       
+        
+        return retval;        
+	}    
 
+    @RequestMapping("/enable")
+    @ResponseBody
+    public String enable(User vo , HttpSession session, Model model)  throws IOException {
+        String retval="";
+        
+        logger.info("userid > {}",vo.getUserid());
+        vo.setUpdtdate(LocalDateTime.now());
+        vo.setStatus("A");
+        try {
+            ur.updateStatus(vo);     
+            retval = "S";
+        } catch (Exception e) {
+            logger.info("status update error" );
+            retval="F";
+        }
+       
+        
+        return retval;        
+	}    
 }

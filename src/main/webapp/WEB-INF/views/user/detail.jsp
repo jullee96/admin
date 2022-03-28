@@ -70,6 +70,12 @@
   width: 74px;
 }
 
+.osIconSize{
+  margin-top:2px;
+  width:20px;
+  height:20px;
+}
+
 </style>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -87,7 +93,7 @@
     <%@ include file="../template/navbar.jsp" %>
     <!-- End Navbar -->
 
-
+<input type="hidden" id="listSize" value="${listSize}">
     <div class="card shadow-lg mx-4 card-profile-bottom">
       <div class="card-body p-3">
         <div class="row gx-4">
@@ -152,6 +158,25 @@
               </p>
             </div>
           </div>
+          <div class="col-2 my-auto">
+            <c:if test="${user.status == 'A'}">
+              <label>
+                <button type="button" onclick="fnUserDisable('${user.userid}','D');" class="btn btn-icon-only btn-rounded btn-outline-success btn-sm mb-0 me-1"><i class="fas fa-check" aria-hidden="true"></i></button>
+                <span class="text-bold text-sm text-success">활성</span>
+              </label>
+            </c:if>
+            <c:if test="${user.status != 'A'}">
+              <label>
+                <button type="button" onclick="fnUserDisable('${user.userid}','A');" class="btn btn-icon-only btn-rounded btn-outline-danger btn-sm mb-0 me-1"><i class="fas fa-times" aria-hidden="true"></i></button>
+                <span class="text-bold text-sm text-danger">비활성</span>
+              </label>
+
+              <%-- <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-1 btn-sm d-flex align-items-center justify-content-center"><i class="fa fa-times" aria-hidden="true"></i></button>
+              <span>비활성</span> --%>
+            </c:if>
+      
+          </div>
+         
           <!--- tab menu --->
 
           <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
@@ -189,7 +214,9 @@
                   <div class="d-flex align-items-center">
                     <p class="mb-0">회원정보 수정 </p>
                       <a href="/user/list" class="btn btn-secondary btn-sm ms-auto">목록으로</a>
+                      <%-- <button type="button" onclick="fnUserDisable('${user.userid}');" class="btn btn-dark btn-sm " style="margin-left:1%">비활성하기</button> --%>
                       <button type="submit" class="btn btn-danger btn-sm " style="margin-left:1%">수정하기</button>
+
                   </div>
                 </div>
                 <div class="card-body">
@@ -309,12 +336,25 @@
                   </div>
                 </div>
                 <div class="card-body pb-0">
-                <p class="mt-n2 text-uppercase text-sm">총 등록 PC 대수</p>
-                  <fmt:formatNumber value="${totalPcCnt}" pattern="#,###" /> <small>대</small>
-                    <div id="plist"></div>                
-                  <%-- <c:forEach items="${subPcList}" var="list" varStatus="status">
-                    ${list.seq}
-                  </c:forEach> --%>
+                <c:if test="${totalPcCnt == 0 }">
+                 <p class="mt-n2 text-uppercase text-sm">등록된 PC가 없습니다 </p>
+                </c:if>
+                <c:if test="${totalPcCnt != 0 }">
+                  <p class="mt-n2 text-uppercase text-sm">총 등록 PC 대수 : 
+                  <fmt:formatNumber value="${totalPcCnt}" pattern="#,###" /> <small>대</small></p>
+                <hr>
+                <div class="table-responsive">
+                  <table class="table align-items-center">
+                    <thead id="plisthead"> </thead>
+                    <tbody id="plist">
+                    </tbody>
+                  </table>
+                </div>
+
+                </c:if>
+                
+                
+
                 </div>
 
               </div>
@@ -376,7 +416,7 @@ $('#jstree').jstree({
     }
 
 })
-.bind('move_node.jstree', function (evt, data) { 
+.bind('move_node.jstree', function (event, data) { 
     // console.log("nodeId : " + data.node.id);
     // console.log("parentId : " + data.node.parent);
     // console.log("position : " + data.position);
@@ -384,23 +424,48 @@ $('#jstree').jstree({
     // console.log("oldPosition : " + data.old_position);    
 })
 .bind('select_node.jstree', function(event, data){
-    var id = data.instance.get_node(data.selected).id;        //id 가져오기
-    console.log("id = >"+id );
-
+    var id = data.instance.get_node(data.selected).id;        
+    var type = data.instance.get_node(data.selected).type;             
+    var pcseq = data.instance.get_node(data.selected).a_attr.data_quantity;        
+    console.log("id  : "+id);
+  
     $.ajax({
         type:"POST",
         url: "/user/getPcDetail",
         data: {
           orgseq : id,
-          domain : domain
+          domain : domain,
+          type: type,
+          seq: pcseq
 
         },
       success: function(ret){
-        $("#plist").empty();
-        for(let i=0;i<ret.length;i++){
-          console.log(ret[i]);
-           $("#plist").append("<p>"+ret[i].pchostname+"</p>");
-        }
+          $("#plist").empty();
+          $("#plisthead").empty();
+          
+          if(ret.length ==0){
+             $("#plisthead").append("<p>등록된 PC가 없습니다</p>");
+          }else{
+            var html_before = '<tr> <td class="h6 pe-3 text-align-start">운영체제 종류</td> <td class="h6 pe-3 text-align-start">호스트 이름</td><td class="h6 pe-3 text-align-start">등록일</td> </tr>';
+            $("#plisthead").append(html_before);
+            
+            for(let i=0;i<ret.length;i++){
+              var html = '<tr> <td> <div class="d-flex px-2 py-1 align-items-center"><div style="display:inline;" class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">';
+              
+              if(ret[i].pcos=='W'){
+                html += '<img class="osIconSize" src="../argon/assets/img/icon_w.png" />';
+              } else if(ret[i].pcos=='U'){
+                html += '<img class="osIconSize" src="../argon/assets/img/icon_u.png" />';
+              } else{
+                html += '<img class="osIconSize" src="../argon/assets/img/icon_h.png" />';
+              }
+
+              html +='<td>'+ ret[i].pchostname+'</td>';
+              html +='<td>'+ ret[i].viewdate+'</td>';
+              
+              $("#plist").append(html);
+            }
+          }
 
       },
       err: function(err){
@@ -496,6 +561,52 @@ function uploadFile(keytype, userid){
       console.log("err:", err)
     }
   });
+
+}
+
+function fnUserDisable(userid, at){
+  if(at == 'A'){ // 활성화
+      if(confirm(userid+"님을 활성화하시겠습니까?")){
+        $.ajax({
+          type:"POST",
+            url: "/user/enable",
+            data: {
+              userid : userid
+            },
+            success: function(retval){
+              if(retval!="F"){
+                alert("회원 로그인 활성화 완료!");
+                location.reload();
+              }else{
+                alert("회원 로그인 활성화 실패");
+                location.reload();
+              }
+            }
+
+        });
+     }
+  } else if(at == 'D'){ // 비활성화
+      if(confirm(userid+"님을 비활성화 처리하시겠습니까?")){
+        $.ajax({
+          type:"POST",
+            url: "/user/disable",
+            data: {
+              userid : userid
+            },
+            success: function(retval){
+              if(retval!="F"){
+                alert("회원 로그인 비활성화 완료!");
+                location.reload();
+              }else{
+                alert("회원 로그인 비활성화 실패");
+                location.reload();
+              }
+            }
+
+        });
+     }
+  }
+
 
 }
 
