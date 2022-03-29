@@ -50,9 +50,9 @@ public class BoardConfig {
     @Comment("게시판 수정일")
     private LocalDateTime updtdate;
 
-    @Column(name = "used", columnDefinition= "integer default 1")
+    @Column(name = "board_used", columnDefinition= "integer default 1")
     @Comment("게시판 사용여부 : 0이면 미사용중 1이면 사용중")
-    private Integer used = 1;
+    private Integer boardused = 1;
 
     @Column(name = "board_role")
 	@Comment("게시판 수정 권한 type : ADMIN, USER, ALL")

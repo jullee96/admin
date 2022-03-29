@@ -88,12 +88,12 @@
   <%@ include file="../template/aside.jsp" %>
 
 
-  <div class="main-content position-relative max-height-vh-100 h-100">
+<div class="main-content position-relative max-height-vh-100 h-100">
     <!-- Navbar -->
     <%@ include file="../template/navbar.jsp" %>
     <!-- End Navbar -->
 
-<input type="hidden" id="listSize" value="${listSize}">
+    <input type="hidden" id="listSize" value="${listSize}">
     <div class="card shadow-lg mx-4 card-profile-bottom">
       <div class="card-body p-3">
         <div class="row gx-4">
@@ -171,8 +171,6 @@
                 <span class="text-bold text-sm text-danger">비활성</span>
               </label>
 
-              <%-- <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-1 btn-sm d-flex align-items-center justify-content-center"><i class="fa fa-times" aria-hidden="true"></i></button>
-              <span>비활성</span> --%>
             </c:if>
       
           </div>
@@ -214,7 +212,6 @@
                   <div class="d-flex align-items-center">
                     <p class="mb-0">회원정보 수정 </p>
                       <a href="/user/list" class="btn btn-secondary btn-sm ms-auto">목록으로</a>
-                      <%-- <button type="button" onclick="fnUserDisable('${user.userid}');" class="btn btn-dark btn-sm " style="margin-left:1%">비활성하기</button> --%>
                       <button type="submit" class="btn btn-danger btn-sm " style="margin-left:1%">수정하기</button>
 
                   </div>
@@ -439,7 +436,7 @@ $('#jstree').jstree({
           seq: pcseq
 
         },
-      success: function(ret){
+        success: function(ret){
           $("#plist").empty();
           $("#plisthead").empty();
           
@@ -467,10 +464,10 @@ $('#jstree').jstree({
             }
           }
 
-      },
-      err: function(err){
-        console.log("err:", err)
-      }
+        },
+        err: function(err){
+          console.log("err:", err)
+        }
     });
 });
 

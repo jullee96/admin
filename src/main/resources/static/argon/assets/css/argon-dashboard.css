@@ -21362,7 +21362,7 @@ fieldset:disabled .btn {
 
 
 .form-switch .form-check-input2:checked:after {
-  transform: translateX(41px);
+  transform: translateX(38px);
 }
 
 .form-switch .form-check-input:checked {
