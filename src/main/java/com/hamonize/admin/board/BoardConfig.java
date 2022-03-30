@@ -34,9 +34,9 @@ public class BoardConfig {
     @Comment("게시판 구분 아이디")
 	private String boardid;
     
-    @Column(name = "type")
+    @Column(name = "board_type")
     @Comment("게시판 타입 > 게시판용 : B , 포스팅 용 : P ")
-	private String type;
+	private String boardtype;
 
     @Column(name = "board_name")
     @Comment("게시판 이름")

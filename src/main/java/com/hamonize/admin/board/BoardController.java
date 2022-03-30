@@ -71,8 +71,12 @@ public class BoardController {
 
             for(BoardConfig menu : blist){
                 Map<String, Object> mtree = new HashMap <String, Object>();
-            
+                Map<String, Object> attr = new HashMap <String, Object>();
+               
                 if( menu.getPseq().equals(el.getSmseq())){
+                    attr.put("data_quantity", menu);
+                    
+                    mtree.put("a_attr", attr);
                     mtree.put("id", lastseq.getSmseq()+i);
                     mtree.put("parent", menu.getPseq());
                     mtree.put("type", "menu");
@@ -87,16 +91,10 @@ public class BoardController {
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(treeList);
-        // logger.info("jsonString >> {}", jsonString);
-		return jsonString;
+    	return jsonString;
 	}
 
-    @RequestMapping("/view")
-    public String view(HttpSession session, BoardConfig vo) {
-        
 
-		return "/board/view";
-	}
 
     @RequestMapping("/create")
     public String create(HttpSession session, BoardConfig vo) {
@@ -150,6 +148,37 @@ public class BoardController {
             logger.info(" nulll ");
         }
        
+		return "redirect:/board/create";
+	}
+
+    @RequestMapping("/editMenu")
+    public String editMenu(HttpSession session, BoardConfig vo) {
+        logger.info("editMenu...");
+        logger.info("getBoardused >> {}", vo.getBoardused());
+       
+        try {
+            vo.setUpdtdate(LocalDateTime.now());
+            bcr.update(vo);
+        } catch (Exception e) {
+            logger.info(" nulll ");
+        }
+       
+
+		return "redirect:/board/create";
+	}
+
+
+    @RequestMapping("/deleteMenu")
+    public String deleteMenu(HttpSession session, BoardConfig vo) {
+        logger.info("delete...");
+        
+        try {
+            bcr.delete(vo);
+        } catch (Exception e) {
+            logger.info(" nulll ");
+        }
+       
+
 		return "redirect:/board/create";
 	}
 }

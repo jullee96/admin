@@ -21,7 +21,42 @@
 tr:hover { 
     background-color: #fb634059;
 }
+}
+.b-icon{
+    color: #344767 !important;
+}
+}
+.b-text{
+    color: #344767 !important;
+}
 
+#board ~ label {
+  color: #8392ab;
+  border-color: #8392ab;
+}
+
+#board:checked ~ label {
+  color: #2dce89;
+  border-color: #2dce89;
+}
+
+#board:checked .b-icon {
+  color: #2dce89;
+  border-color: #2dce89;
+ 
+}
+
+#board:checked .b-text {
+  color: #2dce89;
+  border-color: #2dce89;
+ 
+}
+
+#wiki:checked ~ label {
+  color: #2dce89;
+  border-color: #2dce89;
+ 
+}
 </style>
 <body class="g-sidenav-show bg-gray-100">
     <input type="hidden" id="pageTitle" value="포탈 메뉴 관리">
@@ -152,14 +187,14 @@ tr:hover {
                 </div>
                
                <!-- 사이트맵 수정 -->
-                <div id="div-edit-sitemap" style="display:none;" class="ms-4 col-md-4">
+                <div id="div-edit-sitemap" style="display:none;" class="col-md-3 ms-4">
                     <div class="card">
                         <div class="card-header pb-0">
                            <h5 id="sitemap-title" class="font-weight-bolder">사이트맵 수정</h5>   
                         </div>
                         <form id="sitemapEditForm" name="sitemapEditForm" method="POST" action="javascript:fnSaveSitemap('edit');" >
                             <div class="card-body pb-0">
-                                <div class="row mb-4">
+                                <div class="row mb-2" align = "right">
                                     <div class="col-12 mb-2">
                                         <p class="text-md-start">사이트맵 이름</p>
                                         <input type="hidden" id="smseq" name="smseq">
@@ -167,7 +202,7 @@ tr:hover {
                                         <input class="form-control" type="text" id="sitemapname" name="sitemapname" required>
                                     </div>
                                     
-                                    <div class="col-12 mt-sm-2 ">
+                                    <div class="col-12 mt-sm-2 " >
                                         <button class="btn btn-sm btn-secondary " style="display:inline;" type="button" onclick="fndelete('sitemap')">  삭제 </button>
                                         <button class="btn btn-sm btn-danger ms-2" type="submit">  수정 </button>
 
@@ -180,26 +215,19 @@ tr:hover {
                 </div>
 
                 <!-- 메뉴 생성 화면-->
-                <div id="div-menu" style="display:none;" class="ms-4 col-md-4">
+                <div id="div-menu" style="display:none;" class="col-md-3 ms-4">
                     <div class="card">
                         <div class="card-header pb-0">
                            <h5 id="menu-name" class="font-weight-bolder">메뉴 추가</h5>   
                         </div>
                         <form id="menuForm" name="menuForm" method="POST" action="javascript:fnSaveMenu();" >
-                            <div class="card-body pb-0">
-
-                                <div class="row">
-                                    <div class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-secondary btn-sm ms-auto" > 목록으로</a>
-                                        <button class="btn btn-danger btn-sm" type="submit" style="margin-left:1%">
-                                            생성하기
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="card-body pb-0 mb-2">
+                                <input type="hidden" id="seq" name="seq">
+                                    
                                 <div class="row mb-4">
                                     <div class="col-12 mb-2">
                                         <label class="text-md-start">메뉴 아이디</label>
-                                        <input class="form-control" type="text" id="boardid" name="boardid" value="" required>
+                                        <input class="form-control" type="text" id="boardid" name="boardid" required>
                                     </div>
                                     <div class="col-12 mb-2">
                                         <label class="text-md-start">메뉴 이름</label>
@@ -226,10 +254,46 @@ tr:hover {
 
                                     </div>
                                     <div class="col-12 mb-2">
-                                        <label class="text-md-start">디자인 </label>
-                                        <%-- <input class="form-control" type="text" id="boardname" name="boardname" required> --%>
+                                       <label class="text-md-start">디자인 타입 선택</label>
+                                            
+                                        <div class="row mt-2">
+                                            <div class="col-5 ms-2">
+                                                    <input id="board" type="checkbox" style="display:none" name="boardtype" value="board" onclick="fnBoardTypeChk(this)">
+                                                    <label for="board" class="btn btn-outline-secondary btn-lg border-2 px-6 py-5 ">
+
+                                                        <i class="ni ni-bullet-list-67 b-icon"></i>
+                                                        <span class="b-text">board</span>
+                                                    </label>
+                                                </div>
+
+                                            <div class="col-5 ms-4">
+                                                    <input id="wiki" type="checkbox" style="display:none" name="boardtype" value="wiki" onclick="fnBoardTypeChk(this)">
+                                                    <label for="wiki" class="btn btn-outline-secondary btn-lg border-2 px-6 py-5" >
+                                                        <i class="ni ni-archive-2 b-icon"></i>
+                                                         <span class="b-text">wiki</span>
+                                                    </label>
+                                                    
+                                              
+                                            </div>
+                                        </div>
                                     </div>
                                         
+                                </div>
+
+                                <div class="row">
+                                    <div align = "right">
+                                        <div id="btnMenuEdit" style="display:none;">
+                                            <button class="btn btn-secondary btn-sm" type="button" onclick="fnDeleteMenu()">
+                                                삭제하기
+                                            </button>
+                                            <button class="btn btn-danger btn-sm ms-2" type="button" onclick="fnEditMenu()">
+                                                수정하기
+                                            </button>
+                                        </div>
+                                        <button id="btnMenuNew" class="btn btn-danger btn-sm" type="submit" style="margin-left:1%">
+                                            생성하기
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -300,13 +364,15 @@ $('#jstree').jstree({
 .bind('select_node.jstree', function(event, data){
     var id = data.instance.get_node(data.selected).id;        
     var type = data.instance.get_node(data.selected).type;             
-    var name = data.instance.get_node(data.selected).text;             
+    var name = data.instance.get_node(data.selected).text;
+    var seq = data.instance.get_node(data.selected).a_attr.data_quantity;             
+    
     console.log("id  : "+id);
     console.log("name  : "+name);
     
-   
     $("#sitemapShowname").empty();
     $("#menu-name").empty();
+    $("input[name=boardtype]").prop('checked' ,false);
     
     $("#div-sitemap-menu").hide();
     $("#div-add-sitemap").hide();
@@ -316,7 +382,25 @@ $('#jstree').jstree({
     if(type == 'menu'){
         $("#div-menu").show();
         $("#menu-name").append(name);
+        $("#btnMenuNew").hide();
+        $("#btnMenuEdit").show();
         
+        $("#boardid").val(seq.boardid);
+        $("#boardname").val(seq.boardname);
+        $("#boardrole").val(seq.boardrole);
+        $("#seq").val(seq.seq);
+
+        if(seq.boardused == 0){
+            $("#ckused").prop('checked' ,false);
+        } else {
+            $("#ckused").prop('checked' ,true);
+        }
+
+        if(seq.boardtype == "board"){
+            $("#board").prop('checked' ,true);
+        } else {
+            $("#wiki").prop('checked' ,true);
+        }
 
     } else{
         if(id != 0){
@@ -329,7 +413,6 @@ $('#jstree').jstree({
             $("#div-add-sitemap").hide();
             $("#div-edit-sitemap").hide();
             $("#div-menu").hide();
-
         }
     }
     
@@ -393,6 +476,8 @@ function fnSaveMenu(){
     console.log("checked : " + $("#ckused").is(":checked"));
     console.log("smseq : " + $("#smseq").val());
     console.log("boardrole : " + $("#boardrole").val());
+    console.log("boardtype : " + $("#ckused").is(":checked"));
+  
     const pseq =  $("#smseq").val();
 
     if($("#ckused").is(":checked") == false ){
@@ -405,6 +490,44 @@ function fnSaveMenu(){
     document.menuForm.submit();
 
 }
+
+function fnEditMenu(){
+    var seq = document.menuForm.seq.value;
+    console.log("수정할 seq > " +seq);
+    if($("#ckused").is(":checked") == false ){
+        document.menuForm.boardused.value = 0;
+    } else{
+        document.menuForm.boardused.value = 1;
+    }
+    document.menuForm.action="/board/editMenu";
+    document.menuForm.submit();    
+}
+
+function fnDeleteMenu(){
+    var seq = document.menuForm.seq.value;
+    console.log("삭제할 seq > " +seq);
+    if(confirm("메뉴를 삭제할 경우 하위 페이지 글까지 모두 \n삭제됩니다. 메뉴를 삭제하시겠습니까?")){
+        document.menuForm.action="/board/deleteMenu";
+        document.menuForm.submit();
+    }
+}
+
+function fnBoardTypeChk(type){
+    const checked =type.value;
+    console.log("fnBoardTypeChk >> "+checked);
+    console.log("checked?  >> ");
+    
+    var obj = document.getElementsByName("boardtype");
+    for(let i=0;i<obj.length;i++){
+        if(obj[i] != type){
+            obj[i].checked = false;
+        }
+    }
+    
+
+}
+
+
 
 
 </script>

@@ -207,7 +207,6 @@ public class UserController {
     
         for( Org el : orgList){
             Map<String, Object> tree = new HashMap <String, Object>();
-            // Map<String, Object> pctree = new HashMap <String, Object>();
             Map <String, Boolean> state = new HashMap <String, Boolean> ();
             
             if(el.getSeq() == 1 ){
