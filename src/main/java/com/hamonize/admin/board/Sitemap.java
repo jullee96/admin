@@ -19,7 +19,7 @@ public class Sitemap {
     @Comment("사이트맵 시퀀스 번호")
     private Long smseq;
 
-    @Column(name ="sitemap_name")
+    @Column(name ="sm_name")
     private String sitemapname;
 
     @Comment("사이트냅 생성일")

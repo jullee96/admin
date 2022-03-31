@@ -21,26 +21,26 @@ import lombok.*;
 public class BoardConfig {
     
     @Id
-	@Column
+	@Column(name = "bc_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Comment("게시판 시퀀스 번호")
-	private Long seq;
+	private Long bcseq;
     
 	@Comment("게시판 부모 시퀀스 번호")
     @Column(name = "p_seq")
 	private Long pseq;
 
-    @Column(name = "board_id")
+    @Column(name = "bc_id")
     @Comment("게시판 구분 아이디")
-	private String boardid;
+	private String bcid;
     
-    @Column(name = "board_type")
+    @Column(name = "bc_type")
     @Comment("게시판 타입 > 게시판용 : B , 포스팅 용 : P ")
-	private String boardtype;
+	private String bctype;
 
-    @Column(name = "board_name")
+    @Column(name = "bc_name")
     @Comment("게시판 이름")
-	private String boardname;
+	private String bcname;
 
     @Column(name = "rgstr_date")
     @Comment("게시판 생성일")
@@ -50,13 +50,13 @@ public class BoardConfig {
     @Comment("게시판 수정일")
     private LocalDateTime updtdate;
 
-    @Column(name = "board_used", columnDefinition= "integer default 1")
+    @Column(name = "bc_used", columnDefinition= "integer default 1")
     @Comment("게시판 사용여부 : 0이면 미사용중 1이면 사용중")
-    private Integer boardused = 1;
+    private Integer bcused = 1;
 
-    @Column(name = "board_role")
+    @Column(name = "bc_role")
 	@Comment("게시판 수정 권한 type : ADMIN, USER, ALL")
-	private String boardrole;
+	private String bcrole;
 
     @Transient
     private String viewDate;

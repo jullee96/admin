@@ -14,6 +14,10 @@
 <link rel="stylesheet" href="/dist/themes/proton/style.min.css" />
 <link rel="stylesheet" href="/dist/themes/default/style.min.css" />
 <script src="/dist/jstree.min.js"></script>
+<!-- tuideditor -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css"/>
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
 </head>
 
@@ -84,7 +88,6 @@ tr:hover {
                             <div class="d-flex align-items-end" >
                                 <a class=" text-xs" href="javascript:fnCloseAll();"> [ - 닫기 ]</a>
                                 <a class="ms-2 text-xs" href="javascript:fnOpenAll();"> [ + 열기 ]</a>
-
                                 <a class="ms-2 text-xs" href="javascript:fnShowSitemap('new');"> [ + 사이트맵 추가 ]</a>
                             </div>
                         </div>
@@ -106,14 +109,14 @@ tr:hover {
                         </div>
                         <form id="sitemapForm" name="sitemapForm" method="POST" action="javascript:fnSaveSitemap('new');" >
                             <div class="card-body pb-0">
-                                <div class="row mb-4">
+                                <div class="row mb-2">
                                     <div class="col-12 mb-2">
                                         <p class="text-md-start">사이트맵 이름</p>
                                         <input class="form-control" type="text" id="sitemapname" name="sitemapname" required>
                                     </div>
                                     
                                     <div class="col-12 mt-sm-2 ">
-                                        <button class="btn btn-warning" style="display:inline;" type="submit">  저장 </button>
+                                        <button class="btn btn-warning btn-sm" style="display:inline;float: right;" type="submit">저장 </button>
                                     </div>
                                         
                                 </div>
@@ -155,7 +158,7 @@ tr:hover {
                                             </td>
                                         </tr>
 
-                                        <tr onClick="fnShowMenu();" >
+                                        <tr onClick="fnShowMenu('new');" >
                                             <td class="w-15">
                                                 <div class="d-flex px-2 py-1 align-items-center">
                                                     <div style="display:inline;" class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
@@ -194,17 +197,16 @@ tr:hover {
                         </div>
                         <form id="sitemapEditForm" name="sitemapEditForm" method="POST" action="javascript:fnSaveSitemap('edit');" >
                             <div class="card-body pb-0">
-                                <div class="row mb-2" align = "right">
+                                <div class="row mb-2">
                                     <div class="col-12 mb-2">
                                         <p class="text-md-start">사이트맵 이름</p>
                                         <input type="hidden" id="smseq" name="smseq">
-
                                         <input class="form-control" type="text" id="sitemapname" name="sitemapname" required>
                                     </div>
                                     
                                     <div class="col-12 mt-sm-2 " >
-                                        <button class="btn btn-sm btn-secondary " style="display:inline;" type="button" onclick="fndelete('sitemap')">  삭제 </button>
-                                        <button class="btn btn-sm btn-danger ms-2" type="submit">  수정 </button>
+                                        <button class="btn btn-sm btn-danger ms-2 "style="float: right;" type="submit">  수정 </button>
+                                        <button class="btn btn-sm btn-secondary " style="display:inline;float: right;" type="button" onclick="fndelete('sitemap')">  삭제 </button>
 
                                     </div>
                                         
@@ -222,20 +224,20 @@ tr:hover {
                         </div>
                         <form id="menuForm" name="menuForm" method="POST" action="javascript:fnSaveMenu();" >
                             <div class="card-body pb-0 mb-2">
-                                <input type="hidden" id="seq" name="seq">
+                                <input type="hidden" id="bcseq" name="bcseq">
                                     
                                 <div class="row mb-4">
                                     <div class="col-12 mb-2">
                                         <label class="text-md-start">메뉴 아이디</label>
-                                        <input class="form-control" type="text" id="boardid" name="boardid" required>
+                                        <input class="form-control" type="text" id="bcid" name="bcid" required>
                                     </div>
                                     <div class="col-12 mb-2">
                                         <label class="text-md-start">메뉴 이름</label>
-                                        <input class="form-control" type="text" id="boardname" name="boardname" required>
+                                        <input class="form-control" type="text" id="bcname" name="bcname" required>
                                     </div>
                                     <div class="col-6 mt-3 mt-sm-0 mb-2">
                                         <label class="sub-title" > 작성 권한</label>
-                                        <select class="form-control" name="boardrole" id="boardrole" required focused>
+                                        <select class="form-control" name="bcrole" id="bcrole" required focused>
                                             <option value="" disabled selected hidden>선택해주세요</option>
                                             <option value="ADMIN" >관리자</option>
                                             <option value="USER">유저</option>
@@ -244,7 +246,7 @@ tr:hover {
                                     </div>
                                     <div class="col-4 mt-sm-0 ">
                                         <label class="sub-title" > 사용여부</label>
-                                        <input type="hidden" id="boardused" name="boardused" >
+                                        <input type="hidden" id="bcused" name="bcused" >
                                         <input type="hidden" id="pseq" name="pseq" >
 
                                         <div class="form-check form-switch">
@@ -258,7 +260,7 @@ tr:hover {
                                             
                                         <div class="row mt-2">
                                             <div class="col-5 ms-2">
-                                                    <input id="board" type="checkbox" style="display:none" name="boardtype" value="board" onclick="fnBoardTypeChk(this)">
+                                                    <input id="board" type="checkbox" style="display:none" name="bctype" value="board" onclick="fnBoardTypeChk(this)">
                                                     <label for="board" class="btn btn-outline-secondary btn-lg border-2 px-6 py-5 ">
 
                                                         <i class="ni ni-bullet-list-67 b-icon"></i>
@@ -267,7 +269,7 @@ tr:hover {
                                                 </div>
 
                                             <div class="col-5 ms-4">
-                                                    <input id="wiki" type="checkbox" style="display:none" name="boardtype" value="wiki" onclick="fnBoardTypeChk(this)">
+                                                    <input id="wiki" type="checkbox" style="display:none" name="bctype" value="wiki" onclick="fnBoardTypeChk(this)">
                                                     <label for="wiki" class="btn btn-outline-secondary btn-lg border-2 px-6 py-5" >
                                                         <i class="ni ni-archive-2 b-icon"></i>
                                                          <span class="b-text">wiki</span>
@@ -277,12 +279,27 @@ tr:hover {
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div id="div-mkpage" style="display:none;" class="col-12 mb-2">
+                                       <label class="text-md-start">작성글 관리</label>
+                                            
+                                        <div class="row ">
+                                            <div class="col-12 ">
+                                                <a class="w-100 btn btn-sm btn-outline-secondary" href="javascript:fnGetPageList();"> 작성글 보기</a>
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+                                            <div class="col-12 ">
+                                                <a class="w-100 btn btn-sm btn-outline-secondary" href="javascript:fnShowPageCreate();"> 새 글쓰기</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                         
                                 </div>
 
                                 <div class="row">
-                                    <div align = "right">
-                                        <div id="btnMenuEdit" style="display:none;">
+                                    <div >
+                                        <div style="float: right;" id="btnMenuEdit" style="display:none;">
                                             <button class="btn btn-secondary btn-sm" type="button" onclick="fnDeleteMenu()">
                                                 삭제하기
                                             </button>
@@ -301,19 +318,112 @@ tr:hover {
                 </div>
 
 
-                <div style="display:none;" class="ms-4 col-md-4">
+                <div id="div-page-list" style="display:none;" class="ms-4 col-md-6">
                     <div class="card">
                         <div class="card-header pb-0">
-                           <h5 class="font-weight-bolder">게시판 속성</h5>   
+                           <h5 class="font-weight-bolder">작성글 목록</h5>   
                         </div>
-                        <div class="card-body pb-0">
-                            <div class="row">
-                                <div class="d-flex align-items-center">
-                                    <a href="#" class="btn btn-secondary btn-sm ms-auto" > 목록으로</a>
-                                    <input type="hidden" id="status" value="">
-                                    
+                        <div class="card-body pb-0 mb-4"><hr>
+                            <div class="table-responsive">
+                                <table class="table align-items-center">
+                                    <thead>
+                                        <tr>
+                                            <td class="text-sm text-bold text-start"> 글 번호 </td>
+                                            <td class="text-sm text-bold text-start"> 제목 </td>
+                                            <td class="text-sm text-bold text-start"> 작성자 </td>
+                                            <td class="text-sm text-bold text-start"> 날짜 </td>
+                                            <td> </td>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pageTable"></tbody>
+                            
+                                </table>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+
+                <div id="div-page-create" style="display:none;" class="ms-4 col-md-6">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                           <h5 class="font-weight-bolder">글 작성하기</h5>   
+                        </div>
+                        <form id="pageForm" name="pageForm" method="POST" action="javascript:fnSavePage();">
+                        
+                            <div class="card-body pb-0">
+                                <div class="row mb-4">
+                                    <div class="col-12 mb-2">
+                                        <label class="text-md-start">제목</label>
+                                        <input class="form-control" type="text" id="btitle" name="btitle" required>
+                                    </div>
+                                    <div class="col-12 ">
+                                        <label class="text-md-start">내용</label>
+                                        <input type="hidden" id="bcontent" name="bcontent" >
+                                        <input type="hidden" name="bcseq" >
+                        
+                                        <div id="editor"></div>
+                                    </div>
+
+                                    <div class="col-12" >
+                                        <div style="float: right;" >
+                                            <button type="button" onclick="fnCloseMkPage()" class=" mt-4 btn btn-sm btn-secondary me-2">닫기</button>
+
+                                            <button type="submit" class=" mt-4 btn btn-sm btn-danger" >저장</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="div-page-view" style="display:none;" class="ms-4 col-md-6">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                           <h5 class="font-weight-bolder">작성글 상세</h5>   
+                        </div>
+                        <div class="card-body pb-0">
+                            <div class="row mb-4">
+                                    <div class="col-6 mb-2">
+                                        <label class="text-md-start">글 번호</label>
+                                        <input class="form-control" type="text" id="view-bseq" disabled>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <label class="text-md-start">공개 여부</label>
+                                        <input type="hidden" name="bseq" >
+
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input2" type="checkbox" id="ckbused" checked>
+                                            <label class="form-check-label" for="ckbused"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <label class="text-md-start">작성자</label>
+                                        <input class="form-control" type="text" id="view-userid" disabled>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <label class="text-md-start">작성일</label>
+                                        <input class="form-control" type="text" id="view-viewdate" disabled>
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <label class="text-md-start">제목</label>
+                                        <input class="form-control" type="text" id="view-btitle" disabled>
+                                    </div>
+                                    <div class="col-12 ">
+                                        <label class="text-md-start">내용</label>
+                                        <div id="viewer"></div>
+                                    </div>
+
+                                    <div class="col-12" >
+                                        <div style="float: right;" >
+                                            <button type="button" onclick="fnCloseMkPage()" class=" mt-4 btn btn-sm btn-secondary me-2">닫기</button>
+                                            <button type="submit" class=" mt-4 btn btn-sm btn-dark"> 삭제하기</button>
+                                            <button type="submit" class=" mt-4 btn btn-sm btn-danger" >수정하기</button>
+                                        </div>
+                                    </div>
+                                </div>
 
 
                         </div>
@@ -358,21 +468,17 @@ $('#jstree').jstree({
 
 })
 .bind('loaded.jstree', function(event, data){
-    console.log("loaded after");
     $('#jstree').jstree(true).select_node(0);
 })
 .bind('select_node.jstree', function(event, data){
     var id = data.instance.get_node(data.selected).id;        
     var type = data.instance.get_node(data.selected).type;             
     var name = data.instance.get_node(data.selected).text;
-    var seq = data.instance.get_node(data.selected).a_attr.data_quantity;             
-    
-    console.log("id  : "+id);
-    console.log("name  : "+name);
+    var bc = data.instance.get_node(data.selected).a_attr.data_quantity;             
     
     $("#sitemapShowname").empty();
     $("#menu-name").empty();
-    $("input[name=boardtype]").prop('checked' ,false);
+    $("input[name=bctype]").prop('checked' ,false);
     
     $("#div-sitemap-menu").hide();
     $("#div-add-sitemap").hide();
@@ -380,23 +486,22 @@ $('#jstree').jstree({
     $("#div-menu").hide();
     
     if(type == 'menu'){
-        $("#div-menu").show();
-        $("#menu-name").append(name);
-        $("#btnMenuNew").hide();
-        $("#btnMenuEdit").show();
-        
-        $("#boardid").val(seq.boardid);
-        $("#boardname").val(seq.boardname);
-        $("#boardrole").val(seq.boardrole);
-        $("#seq").val(seq.seq);
 
-        if(seq.boardused == 0){
+        fnShowMenu('edit');
+
+        $("#menu-name").append(name);
+        $("#bcid").val(bc.bcid);
+        $("#bcname").val(bc.bcname);
+        $("#bcrole").val(bc.bcrole);
+        $("#bcseq").val(bc.bcseq);
+
+        if(bc.bcused == 0){
             $("#ckused").prop('checked' ,false);
         } else {
             $("#ckused").prop('checked' ,true);
         }
 
-        if(seq.boardtype == "board"){
+        if(bc.bctype == "board"){
             $("#board").prop('checked' ,true);
         } else {
             $("#wiki").prop('checked' ,true);
@@ -447,43 +552,45 @@ function fnShowSitemap(type){
 function fnShowMenu(type){
     if(type =="edit" ){
         $("#div-edit-sitemap").hide();
-        $("#div-menu").hide();
         $("#div-menu").show();
-   
-   } else{
+        $("#btnMenuNew").hide();
+        $("#btnMenuEdit").show();
+        $("#div-mkpage").show();
+        $("#div-page-list").hide();
+        $("#div-page-view").hide();
+   } else { // new
+        $("#menuForm")[0].reset();
+        $("#bcseq").val('');
         $("#div-edit-sitemap").hide();
         $("#div-menu").show();
-       
+        $("#btnMenuNew").show();
+        $("#btnMenuEdit").hide();
+        $("#div-mkpage").hide();
     }
-    
 }
 
 
 function fnSaveSitemap(type){
-
-    if(type=="new"){
+    if(type == "new"){
         document.sitemapForm.action="/board/saveSitemap";
         document.sitemapForm.submit();
-    }else{
+    }else if(type =="edit"){
         document.sitemapEditForm.action="/board/editSitemap";
         document.sitemapEditForm.submit();
+    } else{
+        alert("error");
     }
 
 
 }
 
 function fnSaveMenu(){
-    console.log("checked : " + $("#ckused").is(":checked"));
-    console.log("smseq : " + $("#smseq").val());
-    console.log("boardrole : " + $("#boardrole").val());
-    console.log("boardtype : " + $("#ckused").is(":checked"));
-  
     const pseq =  $("#smseq").val();
-
+    
     if($("#ckused").is(":checked") == false ){
-        document.menuForm.boardused.value = 0;
+        document.menuForm.bcused.value = 0;
     } else{
-        document.menuForm.boardused.value = 1;
+        document.menuForm.bcused.value = 1;
     }
     document.menuForm.pseq.value = pseq;
     document.menuForm.action="/board/saveMenu";
@@ -492,20 +599,19 @@ function fnSaveMenu(){
 }
 
 function fnEditMenu(){
-    var seq = document.menuForm.seq.value;
-    console.log("수정할 seq > " +seq);
+    var seq = document.menuForm.bcseq.value;
+    console.log("fnEditMenu 수정할 seq > " +seq);
     if($("#ckused").is(":checked") == false ){
-        document.menuForm.boardused.value = 0;
+        document.menuForm.bcused.value = 0;
     } else{
-        document.menuForm.boardused.value = 1;
+        document.menuForm.bcused.value = 1;
     }
     document.menuForm.action="/board/editMenu";
     document.menuForm.submit();    
 }
 
 function fnDeleteMenu(){
-    var seq = document.menuForm.seq.value;
-    console.log("삭제할 seq > " +seq);
+    var seq = document.menuForm.bcseq.value;
     if(confirm("메뉴를 삭제할 경우 하위 페이지 글까지 모두 \n삭제됩니다. 메뉴를 삭제하시겠습니까?")){
         document.menuForm.action="/board/deleteMenu";
         document.menuForm.submit();
@@ -514,21 +620,172 @@ function fnDeleteMenu(){
 
 function fnBoardTypeChk(type){
     const checked =type.value;
-    console.log("fnBoardTypeChk >> "+checked);
-    console.log("checked?  >> ");
-    
-    var obj = document.getElementsByName("boardtype");
+    var obj = document.getElementsByName("bctype");
     for(let i=0;i<obj.length;i++){
         if(obj[i] != type){
             obj[i].checked = false;
         }
     }
+}
+
+function fnShowPageCreate(){
+    console.log("fnShowPageCreate menu seq >>> " + $("#bcseq").val() );
+   $("#div-page-list").hide();
+   $("#div-page-create").show();
+
+}
+
+function fnSavePage(){
+    const bcseq = $("#bcseq").val();
+    console.log("연결할 board seq >> "+bcseq);
+    console.log("title >> "+$("#btitle").val());
+    console.log("editor >> "+editor.getHTML());
+    
+    document.pageForm.bcseq.value=bcseq;
+    document.pageForm.bcontent.value = editor.getHTML();
+    document.pageForm.action="/board/savePage";
+    document.pageForm.submit();
+}
+
+function fnCloseMkPage(){
+    $("#div-page-create").hide();
+    $("#pageForm")[0].reset();
+    $(".ProseMirror > p").remove();
+    
+}
+
+function fnGetPageList(){
+    $("#div-page-create").hide();
+    $("#div-page-list").show();
+    $("#pageTable").empty();
+    const bcseq = $("#bcseq").val();
+    console.log("bcseq >  "+bcseq);
+
+    $.ajax({
+        type:"POST",
+        url: "/board/getPageList",
+        data:{bcseq : bcseq} ,
+        async:false,
+        success: function(boards){
+            if(boards.length == 0 ){
+                var html="";
+                html += '<tr><td></td><td><span class="text-sm text-center">게시글이 존재하지 않습니다</span><td></tr>';
+                 $("#pageTable").append(html);
+            }else{
+                for(let i=0;i<boards.length;i++){
+                    var html="";
+                    html += '<tr onClick="fnPageView('+boards[i].bseq+",'"+boards[i].btitle+"', '"+ boards[i].bcontent+ "' ,'"+ boards[i].userid+"', '"+ boards[i].viewdate+"'"+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
+                    html += '<td class="w-40"><div ><h6 class="text-sm mb-1">'+boards[i].btitle+'</h6> </div></td>';
+                    html += '<td class="w-15">'+boards[i].userid+'</td> <td class="w-15">'+boards[i].viewdate+'</td>'
+                    html += '<td class="align-middle text-sm"> <div class="col text-center"><div class="text-sm">상세 <i class=" ni ni-bold-right" aria-hidden="true"></i> </div> </div></td>  </tr>'
+                    $("#pageTable").append(html);
+                }
+            }
+            
+        
+        }
+    });
+
+}
+
+function fnPageView(bseq, btitle, bcontent, userid, viewdate ){
+    $("#div-page-list").hide();
+    $("#div-page-view").show();
+    
+    $("#view-bseq").val(bseq);
+    $("#view-btitle").val(btitle);
+    $("#view-userid").val(userid);
+    $("#view-viewdate").val(viewdate);
+    
     
 
+    const Viewer = toastui.Editor.factory;
+    const viewer = new Viewer({ 
+        el: document.querySelector('#viewer'), 
+        height: '500px', 
+        initialValue: bcontent, 
+        viewer:true
+    });
+
+
+}
+
+</script>
+
+<script>
+
+const Editor = toastui.Editor;
+const editor = new Editor({ 
+    el: document.querySelector('#editor'), 
+    height: '300px', 
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical',
+    customHTMLRenderer: {
+    htmlBlock: {
+        iframe(node) {
+                return [
+                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+                { type: 'html', content: node.childrenHTML },
+                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+                ];
+            },
+        }
+    },
+    hooks:{
+        addImageBlobHook: (blob, callback) => {
+            const img_url = uploadImage(blob);
+            callback(img_url.split("uploads")[1] , 'alt_img');
+        }    
+    }
+    
+});
+
+
+
+function uploadImage(blob){
+    let url;
+
+    let filename = new Date().getTime() + ".png";
+    let InputFiles = new File([blob], filename, {
+        type: "image/png",
+        lastModified: Date.now()
+    });
+
+    const keytype ="comment";
+
+    if(InputFiles == null ){
+        alert("파일을 선택해주세요");
+        return;
+    }
+  
+    var formData = new FormData();
+
+    formData.append("keyfile", InputFiles);
+    formData.append("keytype", keytype);
+    
+    $.ajax({
+        type:"POST",
+        url: "/file/upload",
+        processData: false,
+        contentType: false,
+        data: formData,
+        async:false,
+        success: function(retval){
+            if(retval != "F"){
+                console.log("업로드 성공" +retval);
+               
+            } else{
+                console.log("업로드 실패");
+            }
+            url = retval;
+        }
+    });
+
+    return url;
 }
 
 
 
-
 </script>
+
 </html>

@@ -2,12 +2,16 @@ package com.hamonize.admin.board;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
+
+import com.hamonize.admin.user.SecurityUser;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +25,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class BoardController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
+    @Autowired
+    SitemapRepository smr;
+
     @Autowired
     BoardConfigRepository bcr;
 
     @Autowired
-    SitemapRepository smr;
+    BoardRepository br;
+
+
     /***
      * 사이트 맵을 생성 > 메뉴을 생성 (타입, 권한등을 메뉴생성시에 같이)
      * @param vo
@@ -41,7 +50,7 @@ public class BoardController {
         Sitemap lastseq = smr.findAll((Sort.by(Sort.Direction.DESC, "smseq"))).get(0);
         
         List <Sitemap> slist = smr.findAll((Sort.by(Sort.Direction.ASC, "smseq")));
-        List <BoardConfig> blist = bcr.findAll((Sort.by(Sort.Direction.ASC, "seq")));
+        List <BoardConfig> blist = bcr.findAll((Sort.by(Sort.Direction.ASC, "bcseq")));
         List<Object> treeList = new ArrayList <>();
 
         Map<String, Object> root = new HashMap <String, Object>();
@@ -80,7 +89,7 @@ public class BoardController {
                     mtree.put("id", lastseq.getSmseq()+i);
                     mtree.put("parent", menu.getPseq());
                     mtree.put("type", "menu");
-                    mtree.put("text", menu.getBoardname());
+                    mtree.put("text", menu.getBcname());
                     treeList.add(mtree);
                     i++;
                 }
@@ -133,14 +142,14 @@ public class BoardController {
     @RequestMapping("/saveMenu")
     public String saveMenu(HttpSession session, BoardConfig vo) {
         logger.info("save...");
-        logger.info("getBoardname >> {}", vo.getBoardname());
-        logger.info("getUsed >> {}", vo.getBoardused());
-        logger.info("getBoardrole >> {}", vo.getBoardrole());
+        logger.info("getBoardname >> {}", vo.getBcname());
+        logger.info("getUsed >> {}", vo.getBcused());
+        logger.info("getBoardrole >> {}", vo.getBcrole());
         logger.info("pseq >> {}", vo.getPseq());
        
         vo.setRgstrdate(LocalDateTime.now());
         try {
-            if(!vo.getBoardname().equals("")){
+            if(!vo.getBcname().equals("")){
                 bcr.save(vo);
             }
                  
@@ -154,7 +163,7 @@ public class BoardController {
     @RequestMapping("/editMenu")
     public String editMenu(HttpSession session, BoardConfig vo) {
         logger.info("editMenu...");
-        logger.info("getBoardused >> {}", vo.getBoardused());
+        logger.info("getBoardused >> {}", vo.getBcused());
        
         try {
             vo.setUpdtdate(LocalDateTime.now());
@@ -181,4 +190,37 @@ public class BoardController {
 
 		return "redirect:/board/create";
 	}
+
+    @RequestMapping("/getPageList")
+    @ResponseBody
+    public List<Board> getPageList(HttpSession session, Board vo) {
+        
+        logger.info("menu seq >> {}",vo.getBcseq());
+        List<Board> blist = br.findAllByBcseq((Sort.by(Sort.Direction.ASC, "bseq")),vo.getBcseq());
+        List<Board> list = new ArrayList<>();
+
+        for(Board el : blist){
+            el.setViewdate(el.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+            list.add(el);
+        }
+
+        return list;
+	}
+
+    @RequestMapping("/savePage")
+    public String savePage(HttpSession session, Board vo) {
+        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
+  
+        vo.setUserid(user.getUserid());    
+        vo.setRgstrdate(LocalDateTime.now());
+        
+        try {
+            br.save(vo);
+        } catch (Exception e) {
+            logger.info(" nulll ");
+        }
+       
+		return "redirect:/board/create";
+	}
+
 }

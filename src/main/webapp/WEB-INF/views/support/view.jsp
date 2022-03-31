@@ -109,7 +109,7 @@ img[alt=alt_img] {
                         <label class="h6 mt-4">내용</label>
                         <input id="content" type="hidden" value="${edit.contents}">
                         <div class="contents" id ="viewer"> ${edit.contents}</div>
-                        <div id="contents"></div>
+                        <%-- <div id="contents"></div> --%>
                         <hr>
                     </div>
 

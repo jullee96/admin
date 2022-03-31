@@ -12,11 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardConfigRepository extends JpaRepository<BoardConfig,String>{
 
-    BoardConfig getBySeq(Long seq);
+    BoardConfig getByBcseq(Long seq);
 
     @Modifying
     @Query(
-        value = "UPDATE tbl_board_config SET board_id = :#{#vo.boardid}, board_used = :#{#vo.boardused}, board_role = :#{#vo.boardrole}, board_type = :#{#vo.boardtype} , board_name = :#{#vo.boardname}, updt_date = :#{#vo.updtdate} WHERE seq = :#{#vo.seq} " , nativeQuery = true
+        value = "UPDATE tbl_board_config SET bc_id = :#{#vo.bcid}, bc_used = :#{#vo.bcused}, bc_role = :#{#vo.bcrole}, bc_type = :#{#vo.bctype} , bc_name = :#{#vo.bcname}, updt_date = :#{#vo.updtdate} WHERE bc_seq = :#{#vo.bcseq} " , nativeQuery = true
     )
 	void update(@Param("vo") BoardConfig vo);
     

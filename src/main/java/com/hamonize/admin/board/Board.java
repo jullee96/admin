@@ -7,14 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Comment;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -23,16 +22,18 @@ import lombok.*;
 public class Board {
     
     @Id
-	@Column
+	@Column(name = "b_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("게시글 시퀀스 번호")
-    private Long seq;
+    private Long bseq;
 
     @Comment("게시글 제목")
-	private String title;
+    @Column(name = "b_title")
+	private String btitle;
 
     @Comment("게시판 내용")
-    private String contents;
+    @Column(name = "b_content")
+	private String bcontent;
 
     @Comment("게시글 작성자 아이디")
     @Column(name = "user_id")
@@ -51,11 +52,10 @@ public class Board {
     private Integer viewcnt = 0;
 
     @Transient
-    private String viewDate;
-
-    @Comment("게시판 구분 아이디")
-	@OneToOne
-    @JoinColumn(name = "board_id")
-    BoardConfig boardConfig;
+    private String viewdate;
+   
+    @Comment("메뉴 시퀀스 번호")
+    @Column(name = "bc_seq")
+    private Long bcseq;
 
 }
