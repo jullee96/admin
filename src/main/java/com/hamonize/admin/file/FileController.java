@@ -51,7 +51,7 @@ public class FileController {
     public String uploadFile(HttpSession session, @RequestParam("keyfile") MultipartFile mFile, FileVO vo) throws IOException {
         SecurityUser user = (SecurityUser) session.getAttribute("userSession");
         
-        // vo.setUserid(user.getUserid());
+        vo.setUserid(user.getUserid());
         logger.info("keytype : {}", vo.getKeytype());
         logger.info("userid : {}", vo.getUserid());
 

@@ -201,6 +201,9 @@ public class BoardController {
 
         for(Board el : blist){
             el.setViewdate(el.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+            // el.setBcontent(el.getBcontent().replaceAll("\'" , "%"));
+            
+            el.setBcontent(el.getBcontent().replaceAll("\"" , "@"));
             list.add(el);
         }
 
@@ -210,7 +213,8 @@ public class BoardController {
     @RequestMapping("/savePage")
     public String savePage(HttpSession session, Board vo) {
         SecurityUser user = (SecurityUser) session.getAttribute("userSession");
-  
+        
+        logger.info("bseq >>> {}", vo.getBseq());
         vo.setUserid(user.getUserid());    
         vo.setRgstrdate(LocalDateTime.now());
         
@@ -223,4 +227,22 @@ public class BoardController {
 		return "redirect:/board/create";
 	}
 
+    @RequestMapping("/editPage")
+    public String editPage(HttpSession session, Board vo) {
+        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
+        
+        logger.info("bcseq >>> {}", vo.getBseq());
+        logger.info("bseq >>> {}", vo.getBseq());
+        
+        vo.setUserid(user.getUserid());    
+        vo.setUpdtdate(LocalDateTime.now());
+        
+        try {
+            br.update(vo);
+        } catch (Exception e) {
+            logger.info(" nulll ");
+        }
+       
+		return "redirect:/board/create";
+	}
 }

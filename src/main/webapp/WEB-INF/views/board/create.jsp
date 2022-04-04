@@ -22,6 +22,16 @@
 </head>
 
 <style>
+
+.toastui-editor-contents img[alt=alt_img] { 
+  /* position: relative; */
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    /* transform: translate(-50%, -50%); */
+}
+
+
 tr:hover { 
     background-color: #fb634059;
 }
@@ -222,7 +232,7 @@ tr:hover {
                         <div class="card-header pb-0">
                            <h5 id="menu-name" class="font-weight-bolder">메뉴 추가</h5>   
                         </div>
-                        <form id="menuForm" name="menuForm" method="POST" action="javascript:fnSaveMenu();" >
+                        <form id="menuForm" name="menuForm" method="POST" action="javascript:fnSaveMenu('new');" >
                             <div class="card-body pb-0 mb-2">
                                 <input type="hidden" id="bcseq" name="bcseq">
                                     
@@ -259,30 +269,29 @@ tr:hover {
                                        <label class="text-md-start">디자인 타입 선택</label>
                                             
                                         <div class="row mt-2">
-                                            <div class="col-5 ms-2">
-                                                    <input id="board" type="checkbox" style="display:none" name="bctype" value="board" onclick="fnBoardTypeChk(this)">
-                                                    <label for="board" class="btn btn-outline-secondary btn-lg border-2 px-6 py-5 ">
-
+                                            <div class="col-5 ms-3">
+                                                <input id="board" type="checkbox" style="display:none" name="bctype" value="board" onclick="fnBoardTypeChk(this)">
+                                                    <label for="board" class="btn btn-outline-secondary btn-lg border-1 px-5 py-4 ">
                                                         <i class="ni ni-bullet-list-67 b-icon"></i>
                                                         <span class="b-text">board</span>
                                                     </label>
+                                                
                                                 </div>
 
                                             <div class="col-5 ms-4">
-                                                    <input id="wiki" type="checkbox" style="display:none" name="bctype" value="wiki" onclick="fnBoardTypeChk(this)">
-                                                    <label for="wiki" class="btn btn-outline-secondary btn-lg border-2 px-6 py-5" >
+                                                <input id="wiki" type="checkbox" style="display:none" name="bctype" value="wiki" onclick="fnBoardTypeChk(this)">
+                                                    <label for="wiki" class="btn btn-outline-secondary btn-lg border-1 px-5 py-4" >
                                                         <i class="ni ni-archive-2 b-icon"></i>
-                                                         <span class="b-text">wiki</span>
+                                                        <span class="b-text">wiki</span>
                                                     </label>
                                                     
-                                              
                                             </div>
                                         </div>
                                     </div>
 
                                     <div id="div-mkpage" style="display:none;" class="col-12 mb-2">
                                        <label class="text-md-start">작성글 관리</label>
-                                            
+                                        <input type="hidden" id="tmp-content">    
                                         <div class="row ">
                                             <div class="col-12 ">
                                                 <a class="w-100 btn btn-sm btn-outline-secondary" href="javascript:fnGetPageList();"> 작성글 보기</a>
@@ -350,7 +359,7 @@ tr:hover {
                         <div class="card-header pb-0">
                            <h5 class="font-weight-bolder">글 작성하기</h5>   
                         </div>
-                        <form id="pageForm" name="pageForm" method="POST" action="javascript:fnSavePage();">
+                        <form id="pageForm" name="pageForm" method="POST" action="javascript:fnSavePage();" >
                         
                             <div class="card-body pb-0">
                                 <div class="row mb-4">
@@ -362,6 +371,7 @@ tr:hover {
                                         <label class="text-md-start">내용</label>
                                         <input type="hidden" id="bcontent" name="bcontent" >
                                         <input type="hidden" name="bcseq" >
+                                        <input type="hidden" name="bseq" >
                         
                                         <div id="editor"></div>
                                     </div>
@@ -369,7 +379,6 @@ tr:hover {
                                     <div class="col-12" >
                                         <div style="float: right;" >
                                             <button type="button" onclick="fnCloseMkPage()" class=" mt-4 btn btn-sm btn-secondary me-2">닫기</button>
-
                                             <button type="submit" class=" mt-4 btn btn-sm btn-danger" >저장</button>
                                         </div>
                                     </div>
@@ -413,14 +422,15 @@ tr:hover {
                                     </div>
                                     <div class="col-12 ">
                                         <label class="text-md-start">내용</label>
+                                        <input type="hidden" id="view-content" >
                                         <div id="viewer"></div>
                                     </div>
 
                                     <div class="col-12" >
                                         <div style="float: right;" >
-                                            <button type="button" onclick="fnCloseMkPage()" class=" mt-4 btn btn-sm btn-secondary me-2">닫기</button>
-                                            <button type="submit" class=" mt-4 btn btn-sm btn-dark"> 삭제하기</button>
-                                            <button type="submit" class=" mt-4 btn btn-sm btn-danger" >수정하기</button>
+                                            <button type="button" onclick="fnGotoPageList()" class=" mt-4 btn btn-sm btn-secondary me-2">목록으로</button>
+                                            <button type="button" onclick="fnDeletepage()" class=" mt-4 btn btn-sm btn-dark"> 삭제하기</button>
+                                            <button type="button" onclick="fnShowEditPage()" class=" mt-4 btn btn-sm btn-danger" >수정하기</button>
                                         </div>
                                     </div>
                                 </div>
@@ -631,19 +641,29 @@ function fnBoardTypeChk(type){
 function fnShowPageCreate(){
     console.log("fnShowPageCreate menu seq >>> " + $("#bcseq").val() );
    $("#div-page-list").hide();
+   $("#div-page-view").hide();
+   
    $("#div-page-create").show();
 
 }
 
 function fnSavePage(){
     const bcseq = $("#bcseq").val();
-    console.log("연결할 board seq >> "+bcseq);
-    console.log("title >> "+$("#btitle").val());
-    console.log("editor >> "+editor.getHTML());
+    const bseq = $("#view-bseq").val();
+    console.log("bcseq > "+bcseq);
+    console.log("bseq > "+bseq);
     
-    document.pageForm.bcseq.value=bcseq;
-    document.pageForm.bcontent.value = editor.getHTML();
-    document.pageForm.action="/board/savePage";
+   if(bseq == '' || bseq == null ){
+        document.pageForm.bcseq.value=bcseq;
+        document.pageForm.bcontent.value = editor.getHTML();
+        document.pageForm.action="/board/savePage";
+   }else{
+        document.pageForm.bcseq.value=bcseq;
+        document.pageForm.bseq.value=bseq;
+        document.pageForm.bcontent.value = editor.getHTML();
+        document.pageForm.action="/board/editPage";
+   }
+
     document.pageForm.submit();
 }
 
@@ -656,17 +676,21 @@ function fnCloseMkPage(){
 
 function fnGetPageList(){
     $("#div-page-create").hide();
+    $("#div-page-view").hide();
+    
     $("#div-page-list").show();
     $("#pageTable").empty();
+    
     const bcseq = $("#bcseq").val();
     console.log("bcseq >  "+bcseq);
 
     $.ajax({
         type:"POST",
         url: "/board/getPageList",
-        data:{bcseq : bcseq} ,
+        data: { bcseq : bcseq } ,
         async:false,
         success: function(boards){
+            console.log("boards.length : "+boards.length);
             if(boards.length == 0 ){
                 var html="";
                 html += '<tr><td></td><td><span class="text-sm text-center">게시글이 존재하지 않습니다</span><td></tr>';
@@ -674,39 +698,71 @@ function fnGetPageList(){
             }else{
                 for(let i=0;i<boards.length;i++){
                     var html="";
-                    html += '<tr onClick="fnPageView('+boards[i].bseq+",'"+boards[i].btitle+"', '"+ boards[i].bcontent+ "' ,'"+ boards[i].userid+"', '"+ boards[i].viewdate+"'"+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
+                    
+                    // $("#tmp-content").val(boards[i].bcontent);
+                    
+                    html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].btitle+'\'\,'+'\''+boards[i].bcontent+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
+                    // html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].btitle+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
                     html += '<td class="w-40"><div ><h6 class="text-sm mb-1">'+boards[i].btitle+'</h6> </div></td>';
                     html += '<td class="w-15">'+boards[i].userid+'</td> <td class="w-15">'+boards[i].viewdate+'</td>'
-                    html += '<td class="align-middle text-sm"> <div class="col text-center"><div class="text-sm">상세 <i class=" ni ni-bold-right" aria-hidden="true"></i> </div> </div></td>  </tr>'
+                    html += '<td class="align-middle text-sm"> <div class="col text-center"><div class="text-sm">상세 <i class="ni ni-bold-right" aria-hidden="true"></i> </div> </div></td>  </tr>'
                     $("#pageTable").append(html);
                 }
             }
-            
         
         }
     });
 
 }
 
-function fnPageView(bseq, btitle, bcontent, userid, viewdate ){
+// function fnPageView( bseq, btitle, userid, viewdate ){
+function fnPageView( bseq, btitle, bcontent, userid,  viewdate ){
     $("#div-page-list").hide();
     $("#div-page-view").show();
-    
+    console.log("bcontent : "+bcontent);
+
+    bcontent = bcontent.replaceAll("@", "'");
+
+    console.log("convert after bcontent : "+bcontent);
+
     $("#view-bseq").val(bseq);
     $("#view-btitle").val(btitle);
     $("#view-userid").val(userid);
     $("#view-viewdate").val(viewdate);
-    
-    
+    $("#view-content").val(bcontent);
 
-    const Viewer = toastui.Editor.factory;
-    const viewer = new Viewer({ 
+
+    var Viewer = toastui.Editor.factory;
+    var viewer = new Viewer({ 
         el: document.querySelector('#viewer'), 
         height: '500px', 
         initialValue: bcontent, 
         viewer:true
     });
 
+
+}
+
+function fnGotoPageList(){
+    $("#div-page-view").hide();
+    $("#div-page-list").show();
+    
+}
+
+
+function fnShowEditPage(){
+    const bcseq = $("#bcseq").val();
+    console.log("fnShowPageCreate menu seq >>> " + $("#bcseq").val() );
+    console.log("fnShowPageCreate menu btitle >>> " + $("#view-btitle").val() );
+    console.log("bcontent >> "+ $("#view-content").val());
+
+    $("#div-page-view").hide();
+    $("#div-page-create").show();
+    $("#btitle").val($("#view-btitle").val());
+    editor.setMarkdown($("#view-content").val());
+
+    // $("#btnSavePage").hide();
+    // <button type="button" id="btnSavePage" class=" mt-4 btn btn-sm btn-danger" >수정</button>
 
 }
 
@@ -751,7 +807,7 @@ function uploadImage(blob){
         lastModified: Date.now()
     });
 
-    const keytype ="comment";
+    const keytype ="board";
 
     if(InputFiles == null ){
         alert("파일을 선택해주세요");
