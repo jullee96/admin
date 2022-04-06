@@ -18,7 +18,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css"/>
 <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-
+<!-- select2 -->
+<link href="/css/select2.min.css" rel="stylesheet" />
+<script src="/js/select2.min.js"></script>
 </head>
 
 <style>
@@ -104,7 +106,7 @@ tr:hover {
       
                         <div class="ps-2 mt-n4 row card-body ">
                             <div class="d-flex px-2 py-1 align-items-center ms-3 col-md-4">
-                                <div id="jstree"></div>
+                                <div class="text-xs" id="jstree"></div>
                             </div>
                         </div>
                     </div>  
@@ -238,6 +240,16 @@ tr:hover {
                                     
                                 <div class="row mb-4">
                                     <div class="col-12 mb-2">
+                                        <label class="sub-title" > 사용 여부</label>
+                                        <input type="hidden" id="bcused" name="bcused" >
+                                        <input type="hidden" id="pseq" name="pseq" >
+
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input2" type="checkbox" id="ckused" checked>
+                                            <label class="form-check-label" for="ckused"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-2">
                                         <label class="text-md-start">메뉴 아이디</label>
                                         <input class="form-control" type="text" id="bcid" name="bcid" required>
                                     </div>
@@ -246,25 +258,22 @@ tr:hover {
                                         <input class="form-control" type="text" id="bcname" name="bcname" required>
                                     </div>
                                     <div class="col-6 mt-3 mt-sm-0 mb-2">
-                                        <label class="sub-title" > 작성 권한</label>
-                                        <select class="form-control" name="bcrole" id="bcrole" required focused>
+                                        <label class="sub-title" > 보기 권한</label>
+                                        <select id="select-role" class="form-control" name="bcrole" id="bcrole" required focused>
                                             <option value="" disabled selected hidden>선택해주세요</option>
-                                            <option value="ADMIN" >관리자</option>
-                                            <option value="USER">유저</option>
-                                            <option value="ALL">모두</option>
+                                            <option value="ADMIN" >관리자만</option>
+                                            <option value="USER">특정 도메인만</option>
+                                            <option value="ALL">모든 유저</option>
                                         </select>
                                     </div>
-                                    <div class="col-4 mt-sm-0 ">
-                                        <label class="sub-title" > 사용여부</label>
-                                        <input type="hidden" id="bcused" name="bcused" >
-                                        <input type="hidden" id="pseq" name="pseq" >
-
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input2" type="checkbox" id="ckused" checked>
-                                            <label class="form-check-label" for="ckused"></label>
-                                        </div>
-
+                                    <div class="col-6 mt-3 mt-sm-0 mb-2">
+                                        <div class="w-100" id="div-detail-select" style="display:none;">
+                                            <label class="sub-title">보여줄 도메인 선택</label>
+                                            <select id="select-domain" style="width:100%;" class="form-control js-example-basic-multiple" name="domains"  multiple="multiple"></select>
+                                            <input type="hidden" id="bcdomains" name="bcdomains" >
+                                        </div>        
                                     </div>
+
                                     <div class="col-12 mb-2">
                                        <label class="text-md-start">디자인 타입 선택</label>
                                             
@@ -486,6 +495,7 @@ $('#jstree').jstree({
     var name = data.instance.get_node(data.selected).text;
     var bc = data.instance.get_node(data.selected).a_attr.data_quantity;             
     
+    $("#select-domain").empty();
     $("#sitemapShowname").empty();
     $("#menu-name").empty();
     $("input[name=bctype]").prop('checked' ,false);
@@ -498,13 +508,30 @@ $('#jstree').jstree({
     if(type == 'menu'){
 
         fnShowMenu('edit');
-
+        
+        
         $("#menu-name").append(name);
         $("#bcid").val(bc.bcid);
         $("#bcname").val(bc.bcname);
         $("#bcrole").val(bc.bcrole);
+        $("#select-role").val(bc.bcrole);
         $("#bcseq").val(bc.bcseq);
+        
+        if( bc.bcrole== "USER" ){
+            $("#div-detail-select").show();
+            
+            var getdomains = JSON.parse(JSON.stringify(bc.bcdomains));
+            var domains =JSON.parse(getdomains);
+            
+            for(let i=0;i<domains.length;i++){
+                var newOption = new Option(domains[i].text, domains[i].id , true, true);
+                $('#select-domain').append(newOption).trigger('change');
+            }
 
+        }else{
+            $("#div-detail-select").hide();
+        }
+        
         if(bc.bcused == 0){
             $("#ckused").prop('checked' ,false);
         } else {
@@ -533,6 +560,59 @@ $('#jstree').jstree({
     
     
 });
+
+$(document).ready(function() {
+    $('#select-domain').select2({
+        ajax: {
+            url: "/board/getDomainList",
+            dataType: 'json',
+            quietMillis: 50,
+            data: function (params) {
+                // console.log("params : "+params.term);
+                if(params.term == undefined){
+                    params.term = "all";
+                }
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        // console.log(item.seq)
+                        return {
+                            text: item.domain,
+                            id: item.seq
+                        }
+                    })
+                };
+            }
+        }
+    });
+    
+});
+
+$("#select-role").on("click",function(){
+    var option = $("#select-role").val();
+    console.log("option : "+option);
+    if( option== "USER" ){
+        $("#div-detail-select").show();
+    }else{
+        $("#div-detail-select").hide();
+    }
+});
+
+// $("#select-domain").on("select2:unselect",function(e){
+//     console.log("value : "+$("#select-domain").val());
+//     // console.log("value : "+$("#select-domain").find(':selected').text);
+//     var target = document.getElementById("select-domain");
+//     // console.log("value : "+$("#select-domain").find(':selected').text);
+//      for(let i=0;i< target.options.length ;i++){
+//         console.log("target.options ::: "+target.options[i].id);     
+//         console.log("target.options ::: "+target.options[i].text);     
+//      }
+// });
+
 
 function fnOpenAll(){
   $("#jstree").jstree("open_all");
@@ -610,12 +690,31 @@ function fnSaveMenu(){
 
 function fnEditMenu(){
     var seq = document.menuForm.bcseq.value;
+    var cmptarget = document.getElementById("select-domain");
+    
+    var target = document.getElementById("select-domain");
+    console.log("targets> " +target);
+
     console.log("fnEditMenu 수정할 seq > " +seq);
+    var domains ="[";
+    for(let i=0;i< target.options.length ;i++){
+       if(target.options[i].selected){
+           domains += '{"id":"'+target.options[i].value +'","text":"'+target.options[i].text+'"},';
+       }
+    }
+    domains = domains.substr(0, domains.length - 1);
+    domains += "]";
+    console.log("domains : "+domains);
+        
     if($("#ckused").is(":checked") == false ){
         document.menuForm.bcused.value = 0;
     } else{
         document.menuForm.bcused.value = 1;
     }
+    
+    document.menuForm.bcdomains.value=domains;
+    console.log("domains : "+$("[name=bcdomains]").val());
+    
     document.menuForm.action="/board/editMenu";
     document.menuForm.submit();    
 }
@@ -698,9 +797,6 @@ function fnGetPageList(){
             }else{
                 for(let i=0;i<boards.length;i++){
                     var html="";
-                    
-                    // $("#tmp-content").val(boards[i].bcontent);
-                    
                     html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].btitle+'\'\,'+'\''+boards[i].bcontent+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
                     // html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].btitle+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
                     html += '<td class="w-40"><div ><h6 class="text-sm mb-1">'+boards[i].btitle+'</h6> </div></td>';
@@ -722,8 +818,6 @@ function fnPageView( bseq, btitle, bcontent, userid,  viewdate ){
     console.log("bcontent : "+bcontent);
 
     bcontent = bcontent.replaceAll("@", "'");
-
-    console.log("convert after bcontent : "+bcontent);
 
     $("#view-bseq").val(bseq);
     $("#view-btitle").val(btitle);
@@ -752,9 +846,6 @@ function fnGotoPageList(){
 
 function fnShowEditPage(){
     const bcseq = $("#bcseq").val();
-    console.log("fnShowPageCreate menu seq >>> " + $("#bcseq").val() );
-    console.log("fnShowPageCreate menu btitle >>> " + $("#view-btitle").val() );
-    console.log("bcontent >> "+ $("#view-content").val());
 
     $("#div-page-view").hide();
     $("#div-page-create").show();

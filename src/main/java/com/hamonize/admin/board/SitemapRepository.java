@@ -13,7 +13,7 @@ public interface SitemapRepository extends JpaRepository<Sitemap, String>{
 
     @Modifying
     @Query(
-        value = "UPDATE tbl_sitemap SET sitemap_name = :#{#vo.sitemapname}, updt_date = :#{#vo.updtdate} WHERE sm_seq = :#{#vo.smseq} " , nativeQuery = true
+        value = "UPDATE tbl_sitemap SET sm_name = :#{#vo.sitemapname}, updt_date = :#{#vo.updtdate} WHERE sm_seq = :#{#vo.smseq} " , nativeQuery = true
     )
     void update(@Param("vo") Sitemap vo);
 

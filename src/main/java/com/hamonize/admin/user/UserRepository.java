@@ -1,5 +1,6 @@
 package com.hamonize.admin.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -9,11 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 
 @Transactional
-@Repository
 public interface UserRepository extends JpaRepository<User, Long>{
     public Optional<User> findByUserid(String userid);
     public User findByUsername(String username);
@@ -50,5 +49,9 @@ public interface UserRepository extends JpaRepository<User, Long>{
         value = "UPDATE tbl_admin_user SET status = :#{#user.status} , updt_date = :#{#user.updtdate} WHERE user_id = :#{#user.userid} " , nativeQuery = true
     )
     public void updateStatus(@Param("user") User user);
+    public List<User> findAllByDomainNotNull();
+    public List<User> findAllByDomainNotNullOrderByDomain();
+    public List<User> findAllByDomainOrderByDomain(String q);
+    public List<User> findAllByDomainContainingIgnoreCase(String q);
 
 }

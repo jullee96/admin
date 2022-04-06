@@ -55,8 +55,12 @@ public class BoardConfig {
     private Integer bcused = 1;
 
     @Column(name = "bc_role")
-	@Comment("게시판 수정 권한 type : ADMIN, USER, ALL")
+	@Comment("게시판 보기 권한 type : ADMIN, USER, ALL")
 	private String bcrole;
+
+    @Column(name = "bc_domains")
+	@Comment("게시판을 보여줄 상세 도메인들")
+	private String bcdomains;
 
     @Transient
     private String viewDate;

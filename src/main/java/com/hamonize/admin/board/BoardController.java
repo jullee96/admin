@@ -11,13 +11,18 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import com.hamonize.admin.user.SecurityUser;
+import com.hamonize.admin.user.User;
+import com.hamonize.admin.user.UserRepository;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -34,6 +39,9 @@ public class BoardController {
 
     @Autowired
     BoardRepository br;
+
+    @Autowired
+    UserRepository ur;
 
 
     /***
@@ -83,6 +91,7 @@ public class BoardController {
                 Map<String, Object> attr = new HashMap <String, Object>();
                
                 if( menu.getPseq().equals(el.getSmseq())){
+                    logger.info("menu getBcdomains : {}", menu.getBcdomains());
                     attr.put("data_quantity", menu);
                     
                     mtree.put("a_attr", attr);
@@ -164,6 +173,7 @@ public class BoardController {
     public String editMenu(HttpSession session, BoardConfig vo) {
         logger.info("editMenu...");
         logger.info("getBoardused >> {}", vo.getBcused());
+        logger.info("getBcdomains >> {}", vo.getBcdomains());
        
         try {
             vo.setUpdtdate(LocalDateTime.now());
@@ -245,4 +255,21 @@ public class BoardController {
        
 		return "redirect:/board/create";
 	}
+
+    @RequestMapping("/getDomainList")
+    @ResponseBody
+    public  List <User>  getDomainList( @RequestParam("q") String q,  HttpSession session, Board vo) throws JsonGenerationException, JsonMappingException, IOException {
+        logger.info("q >> {}", q);
+        List <User> userList = new ArrayList<>();
+        
+        if(!q.equals("all")){
+            userList = ur.findAllByDomainContainingIgnoreCase(q);
+        }else{
+            userList = ur.findAllByDomainNotNullOrderByDomain();
+        }
+        
+        
+        return userList;
+    }
+    
 }
