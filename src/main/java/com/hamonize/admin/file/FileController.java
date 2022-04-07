@@ -92,6 +92,46 @@ public class FileController {
         return result;
     }
 
+    @PostMapping("/uploadEditorImg")
+    @ResponseBody
+    public FileVO uploadEditorImg(HttpSession session, @RequestParam("keyfile") MultipartFile mFile, FileVO vo) throws IOException {
+        SecurityUser user = (SecurityUser) session.getAttribute("userSession");
+        
+        vo.setUserid(user.getUserid());
+        logger.info("keytype : {}", vo.getKeytype());
+        logger.info("userid : {}", vo.getUserid());
+
+
+        FileVO result = new FileVO();
+        Path uploadDir = Paths.get(path);
+      
+        if(!Files.isDirectory(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+         
+        logger.info("path : {}", path);
+  
+        UUID tmpFileName = UUID.randomUUID(); 
+        String originalFileName = mFile.getOriginalFilename();        
+        String fileExt = FilenameUtils.getExtension(originalFileName);
+        String logicalFileName = tmpFileName.toString()+ "." + fileExt;
+        byte[] fileBytes = mFile.getBytes();
+        Path filePath = uploadDir.resolve(logicalFileName);
+        
+        vo.setFilename(logicalFileName);
+        vo.setFilerealname(originalFileName);
+        vo.setFilesize(mFile.getSize());
+        vo.setFilepath(filePath.toString());
+
+        if(Files.write(filePath, fileBytes) != null){
+            result = fr.save(vo);
+        }else{
+            result = null;
+        }
+        return result;
+
+    }
+
 
     @PostMapping("/uploadSupportImg")
     @ResponseBody

@@ -19,10 +19,12 @@ public interface BoardRepository extends JpaRepository<Board,String>{
 
     @Modifying
     @Query(
-        value = "UPDATE tbl_boards SET b_content = :#{#vo.bcontent}, b_title = :#{#vo.btitle}, user_id = :#{#vo.userid}, updt_date = :#{#vo.updtdate} WHERE b_seq = :#{#vo.bseq} " , nativeQuery = true
+        value = "UPDATE tbl_boards SET b_content = :#{#vo.bcontent}, b_title = :#{#vo.btitle}, user_id = :#{#vo.userid}, updt_date = :#{#vo.updtdate}, img_seqs = :#{#vo.imgseqs} WHERE b_seq = :#{#vo.bseq} " , nativeQuery = true
     )
 	void update(@Param("vo") Board vo);
 
     List<Board> findAllByBcseq(Sort sort, Long bcseq);
+
+
     
 }

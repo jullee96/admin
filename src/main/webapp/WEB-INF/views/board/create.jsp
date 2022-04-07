@@ -381,6 +381,7 @@ tr:hover {
                                         <input type="hidden" id="bcontent" name="bcontent" >
                                         <input type="hidden" name="bcseq" >
                                         <input type="hidden" name="bseq" >
+                                        <input type="hidden" name="imgseqs" id="imgseqs" >
                         
                                         <div id="editor"></div>
                                     </div>
@@ -517,6 +518,7 @@ $('#jstree').jstree({
         $("#select-role").val(bc.bcrole);
         $("#bcseq").val(bc.bcseq);
         
+
         if( bc.bcrole== "USER" ){
             $("#div-detail-select").show();
             
@@ -602,16 +604,6 @@ $("#select-role").on("click",function(){
     }
 });
 
-// $("#select-domain").on("select2:unselect",function(e){
-//     console.log("value : "+$("#select-domain").val());
-//     // console.log("value : "+$("#select-domain").find(':selected').text);
-//     var target = document.getElementById("select-domain");
-//     // console.log("value : "+$("#select-domain").find(':selected').text);
-//      for(let i=0;i< target.options.length ;i++){
-//         console.log("target.options ::: "+target.options[i].id);     
-//         console.log("target.options ::: "+target.options[i].text);     
-//      }
-// });
 
 
 function fnOpenAll(){
@@ -738,10 +730,9 @@ function fnBoardTypeChk(type){
 }
 
 function fnShowPageCreate(){
-    console.log("fnShowPageCreate menu seq >>> " + $("#bcseq").val() );
+    // console.log("fnShowPageCreate menu seq >>> " + $("#bcseq").val() );
    $("#div-page-list").hide();
    $("#div-page-view").hide();
-   
    $("#div-page-create").show();
 
 }
@@ -749,8 +740,18 @@ function fnShowPageCreate(){
 function fnSavePage(){
     const bcseq = $("#bcseq").val();
     const bseq = $("#view-bseq").val();
+    var imgseqs = $("#imgseqs").val();
+    
     console.log("bcseq > "+bcseq);
     console.log("bseq > "+bseq);
+    console.log("imgseq > "+imgseq);
+    
+    if(imgseq!=null){
+        imgseq = imgseq.substr(0, imgseq.length - 1);
+        imgseqs += ","+imgseq;
+    }
+    console.log("imgseqs > "+imgseqs);
+    document.pageForm.imgseqs.value=imgseqs;
     
    if(bseq == '' || bseq == null ){
         document.pageForm.bcseq.value=bcseq;
@@ -789,7 +790,7 @@ function fnGetPageList(){
         data: { bcseq : bcseq } ,
         async:false,
         success: function(boards){
-            console.log("boards.length : "+boards.length);
+            // console.log("boards.length : "+boards.length);
             if(boards.length == 0 ){
                 var html="";
                 html += '<tr><td></td><td><span class="text-sm text-center">게시글이 존재하지 않습니다</span><td></tr>';
@@ -797,7 +798,7 @@ function fnGetPageList(){
             }else{
                 for(let i=0;i<boards.length;i++){
                     var html="";
-                    html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].btitle+'\'\,'+'\''+boards[i].bcontent+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
+                    html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].imgseqs+'\'\,'+'\''+boards[i].btitle+'\'\,'+'\''+boards[i].bcontent+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
                     // html += '<tr onClick="fnPageView( \''+boards[i].bseq+'\'\,' +'\''+boards[i].btitle+'\'\,'+'\''+boards[i].userid+'\'\,'+'\''+ boards[i].viewdate+'\''+');" > <td class="w-15">'+boards[i].bseq+'</td> ';
                     html += '<td class="w-40"><div ><h6 class="text-sm mb-1">'+boards[i].btitle+'</h6> </div></td>';
                     html += '<td class="w-15">'+boards[i].userid+'</td> <td class="w-15">'+boards[i].viewdate+'</td>'
@@ -811,12 +812,11 @@ function fnGetPageList(){
 
 }
 
-// function fnPageView( bseq, btitle, userid, viewdate ){
-function fnPageView( bseq, btitle, bcontent, userid,  viewdate ){
+function fnPageView( bseq, imgseqs, btitle, bcontent, userid,  viewdate ){
     $("#div-page-list").hide();
     $("#div-page-view").show();
-    console.log("bcontent : "+bcontent);
-
+    // console.log("bcontent : "+bcontent);
+    console.log("imgseqs : "+imgseqs);
     bcontent = bcontent.replaceAll("@", "'");
 
     $("#view-bseq").val(bseq);
@@ -824,8 +824,8 @@ function fnPageView( bseq, btitle, bcontent, userid,  viewdate ){
     $("#view-userid").val(userid);
     $("#view-viewdate").val(viewdate);
     $("#view-content").val(bcontent);
-
-
+    $("#imgseqs").val(imgseqs);
+        
     var Viewer = toastui.Editor.factory;
     var viewer = new Viewer({ 
         el: document.querySelector('#viewer'), 
@@ -857,6 +857,55 @@ function fnShowEditPage(){
 
 }
 
+
+  
+var imgseq = "";
+
+function uploadImage(blob){
+    let url;
+
+    let filename = new Date().getTime() + ".png";
+    let InputFiles = new File([blob], filename, {
+        type: "image/png",
+        lastModified: Date.now()
+    });
+
+    const keytype ="board";
+
+    if(InputFiles == null ){
+        alert("파일을 선택해주세요");
+        return;
+    }
+  
+    var formData = new FormData();
+
+    formData.append("keyfile", InputFiles);
+    formData.append("keytype", keytype);
+    
+    $.ajax({
+        type:"POST",
+        url: "/file/uploadEditorImg",
+        processData: false,
+        contentType: false,
+        data: formData,
+        async:false,
+        success: function(retval){
+            if(retval != "F"){
+                console.log("업로드 성공" +retval.seq);
+                console.log("업로드 성공" +retval.filepath);
+               
+            } else{
+                console.log("업로드 실패");
+            }
+
+            url = retval.filepath;
+            console.log("upload before imgseqs : "+ imgseq);
+            imgseq += retval.seq+',';
+        }
+    });
+
+    return url;
+}
 </script>
 
 <script>
@@ -888,48 +937,6 @@ const editor = new Editor({
 });
 
 
-
-function uploadImage(blob){
-    let url;
-
-    let filename = new Date().getTime() + ".png";
-    let InputFiles = new File([blob], filename, {
-        type: "image/png",
-        lastModified: Date.now()
-    });
-
-    const keytype ="board";
-
-    if(InputFiles == null ){
-        alert("파일을 선택해주세요");
-        return;
-    }
-  
-    var formData = new FormData();
-
-    formData.append("keyfile", InputFiles);
-    formData.append("keytype", keytype);
-    
-    $.ajax({
-        type:"POST",
-        url: "/file/upload",
-        processData: false,
-        contentType: false,
-        data: formData,
-        async:false,
-        success: function(retval){
-            if(retval != "F"){
-                console.log("업로드 성공" +retval);
-               
-            } else{
-                console.log("업로드 실패");
-            }
-            url = retval;
-        }
-    });
-
-    return url;
-}
 
 
 

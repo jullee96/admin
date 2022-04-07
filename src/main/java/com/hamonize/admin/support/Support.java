@@ -56,7 +56,7 @@ public class Support {
     private String contents;
 
     @Size(max = 10)
-    @Comment("진행 상태 > 0: 처리중, 1:완료")
+    @Comment("진행 상태 > W:답변대기 , P: 처리중, D:완료")
     private String status;
 
 
@@ -75,5 +75,7 @@ public class Support {
     @Transient
     private String endDate;
 
-
+    @Comment("게시글에 사용된 이미지 시퀀스들")
+    @Column(name = "img_seqs")
+	private String imgseqs;
 }

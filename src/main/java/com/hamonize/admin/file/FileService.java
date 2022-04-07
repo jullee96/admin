@@ -14,10 +14,7 @@ public class FileService {
     FileRepository fr;
 
     public void upload(FileVO vo){
-        vo.setInsdate(LocalDateTime.now());
-        logger.info("frvo.getKeytype()  > {} ",vo.getKeytype() );
-        logger.info("fr.existsByUserid(vo.getUserid())  > {} ",fr.existsByUserid(vo.getUserid()) );
-
+        vo.setRgstrdate(LocalDateTime.now());
         if(vo.getKeytype().equals("img")){
             
             if(fr.existsByUseridAndKeytype(vo.getUserid(), vo.getKeytype()) == true){ // 이미 있는 경우 update

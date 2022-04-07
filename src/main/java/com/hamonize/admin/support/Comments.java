@@ -46,4 +46,8 @@ public class Comments {
 
     @Transient
     private String viewDate;
+
+    @Comment("게시글에 사용된 이미지 시퀀스들")
+    @Column(name = "img_seqs")
+	private String imgseqs;
 }

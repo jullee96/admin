@@ -169,7 +169,10 @@
                                     </c:if>
 
                                     <c:if test='${list.status eq "D"}' >
-                                       <span class="badge badge-secondary badge-md">답변완료</span>
+                                       <span class="badge badge-black badge-md">답변완료</span>
+                                    </c:if>
+                                    <c:if test='${list.status eq "W"}' >
+                                       <span class="badge badge-secondary badge-md">답변대기</span>
                                     </c:if>
 
                                 </td>

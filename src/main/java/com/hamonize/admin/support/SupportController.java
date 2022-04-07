@@ -53,7 +53,7 @@ public class SupportController {
 
 
         // paging
-        pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
+        pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"rgstrdate"));
         Page<Support> resultPage = sr.findAll(pageable);
         List<Support> list = resultPage.getContent();
         List<Support> slist = new ArrayList<>();
@@ -88,9 +88,11 @@ public class SupportController {
 
         
         try {
-            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
+            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"rgstrdate"));
     
             if(vo.getStartDate() != null && vo.getEndDate() != null ){ // keyword + page + 날짜 계산하는 경우
+                logger.info(" keyword + page + 날짜 keyword...{}", keyword);
+                   
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             
                 LocalDateTime startDate = LocalDate.parse(vo.getStartDate(), formatter).atStartOfDay();
@@ -149,6 +151,7 @@ public class SupportController {
                     model.addAttribute("keyword",keyword);
 
                 } else{ //문자만 있는 경우
+                    logger.info(" 문자만 keyword...{}", keyword);
                     Page<Support> resultPage = sr.findByTitleContainingIgnoreCaseOrUseridContainingIgnoreCase(pageable, keyword, keyword);
                     List<Support> list = resultPage.getContent();
                     List<Support> slist = new ArrayList<>();
@@ -191,7 +194,7 @@ public class SupportController {
         logger.info("\n\n\n <<< list >> page : {}", page);
          
         try {
-            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"seq"));
+            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC,"rgstrdate"));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             
             if(vo.getStartDate() != null){
@@ -255,8 +258,18 @@ public class SupportController {
         return "/support/list";
 	}
 
+    
+    @PostMapping("/updateStatus")
+    @ResponseBody
+    public int updateStatus(Support svo, Support vo, Model model) {
+        logger.info("\n\n\n <<< 1:1문의 상세 수정 >> ");
+        logger.info("seq >> {}", vo.getSeq());
+        vo.setUpdtdate(LocalDateTime.now());
 
-
+        int ret = sr.updateStatus(vo);            
+        return ret;
+        // return "/support/apply";
+	}
 
 
     @PostMapping("/edit")
@@ -283,6 +296,8 @@ public class SupportController {
         Support edit = sr.findBySeq(vo.getSeq());
 
         edit.setViewDate(edit.getRgstrdate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
+        edit.setContents(edit.getContents().replace("\"", "\'"));
+      
         logger.info("list length : {}", list.size());
         model.addAttribute("edit", edit);
         model.addAttribute("clist", list);

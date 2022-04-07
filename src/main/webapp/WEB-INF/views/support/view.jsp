@@ -46,7 +46,8 @@ img[alt=alt_img] {
   <input type="hidden" id="pageTitle" value="기술지원 관리">
   <input type="hidden" id="pageSubTitle" value="기술지원 답변하기">
   <input type="hidden" id="supportseq" value="${edit.seq}">
-                    
+  <input type="hidden" id="imgseqs" value="${edit.imgseqs}">
+                       
   <div class="position-absolute w-100 min-height-300 top-0" >
     <span class="mask bg-warning opacity-6"></span>
   </div>
@@ -64,12 +65,20 @@ img[alt=alt_img] {
             <div class="card-body p-3">
                 <h5 class="font-weight-bolder">문의 상세 
                     <input type="hidden" id="clistSize" value="${clistSize}">
+                    <input type="hidden" id="status" name="status" value="${edit.status}">
                     <c:if test="${clistSize != 0}">
-                        <button type="button" class="mt-2 btn btn-outline-secondary btn-status"> 답변완료</button>  
+                        <c:if test="${edit.status == 'D'}">                            
+                            <button type="button" onclick="fnUpdateStatus('D')" class="mt-2 btn btn-outline-dark btn-status"> 답변완료</button>  
+                        </c:if>
+                        <c:if test="${edit.status == 'P'}">                            
+                            <button type="button" onclick="fnUpdateStatus('P')" class="mt-2 btn btn-outline-success btn-status"> 처리중</button>  
+                        </c:if>
+
                     </c:if>
                     <c:if test="${clistSize == 0}">
-                        <button type="button" class="mt-2 btn btn-outline-success btn-status"> 처리중</button>  
+                        <button type="button" onclick="fnUpdateStatus('W')" class="mt-2 btn btn-outline-secondary btn-status"> 답변대기</button>  
                     </c:if>
+
                 </h5> 
                     
                      <hr>  
@@ -132,7 +141,8 @@ img[alt=alt_img] {
                     <div class="contents" id ="viewer_cmt_${status.count}"></div>
                     ${list.viewDate}
                     <a style="margin-left:92%;" href="javascript:fnShowEiditor('edit','${status.count}');" >[수정]</a> | 
-                    <a href="/support/deleteComment?seq=${list.seq}" >[삭제]</a>
+                    <a href="javascript:fnDeleteComment('${list.seq}');" >[삭제]</a>
+                    <%-- <a href="/support/deleteComment?seq=${list.seq}" >[삭제]</a> --%>
                     <input id="cmt_${status.count}" type="hidden" value='${list.comment}'>
                 </div>
             </div>
@@ -221,6 +231,7 @@ const editor = new Editor({
 
  console.log(editor.getHTML());
     
+var imgseqs = $("#imgseqs").val();
 
 function uploadImage(blob){
     let url;
@@ -245,19 +256,21 @@ function uploadImage(blob){
     
     $.ajax({
         type:"POST",
-        url: "/file/upload",
+        url: "/file/uploadEditorImg",
         processData: false,
         contentType: false,
         data: formData,
         async:false,
         success: function(retval){
             if(retval != "F"){
-                console.log("업로드 성공" +retval);
+                console.log("업로드 성공" +retval.seq);
+                console.log("업로드 성공" +retval.filepath);
                
             } else{
                 console.log("업로드 실패");
             }
-            url = retval;
+            url = retval.filepath;
+            imgseqs += retval.seq+',';
         }
     });
 
@@ -325,7 +338,9 @@ function fnSaveComment(type){
     const supportseq = $("#supportseq").val(); 
     const comment = editor.getHTML();
     console.log("type >> "+type);
-    alert("c_seq : "+c_seq);
+    if(imgseqs.length !=0 ){
+        imgseqs = imgseqs.substr(0, imgseqs.length - 1);
+    }
     
     if(type == "save"){
         $.ajax( { 
@@ -334,15 +349,16 @@ function fnSaveComment(type){
             data : {
                     supportseq : supportseq,
                     comment : comment,
+                    imgseqs : imgseqs
                 },
             success : function(seq) {
                 if(seq > 0){
-                    alert( "success" );
+                    alert( "저장 완료" );
                 } else{
-                    alert( "fail" );
+                    alert( "저장실패" );
                 }
 
-                location.href="/support/list";
+                location.reload();
 
             }, error : function(e) {
                 alert( "fail" );
@@ -357,12 +373,13 @@ function fnSaveComment(type){
                     seq : c_seq,
                     supportseq : supportseq,
                     comment : comment,
+                    imgseqs : imgseqs
                 },
             success : function(seq) {
                 if(seq > 0){
-                    alert( "success" );
+                    alert( "저장완료" );
                 } else{
-                    alert( "fail" );
+                    alert( "저장실패" );
                 }
 
                 location.href="/support/list";
@@ -375,6 +392,53 @@ function fnSaveComment(type){
 
 }
 
+function fnDeleteComment(seq){
+    if( confirm("코멘트를 삭제하시겠습니까?"+seq) ){
+       document.location.href="/support/deleteComment?seq="+seq;
+   
+    }
+        
+
+}
+
+function fnUpdateStatus(type){
+    console.log("type : "+type);
+    var status = $("#status").val();
+    var seq = $("#supportseq").val();
+    console.log("status : "+status);
+    
+    if(type == "P"){
+        if(confirm("상태를 답변완료로 변경하시겠습니까?")){
+            status = "D";
+        }
+    } else if(type == "D"){ // 답변완료
+        if(confirm("상태를 처리중으로 변경하시겠습니까?")){
+            status = "P";
+        }
+    } else{ // 답변대기인경우
+        alert("문의글의 상태를 변경하려면 먼저 답변을 작성해주세요.");
+    }
+
+     $.ajax( { 
+            url : "/support/updateStatus",
+            type:"POST",
+            data : {
+                    seq : seq,
+                    status : status
+                },
+            success : function(seq) {
+                if(seq > 0){
+                    alert( "저장완료" );
+                } else{
+                    alert( "저장실패" );
+                }
+
+                location.reload();
+            }, error : function(e) {
+                alert( "fail" );
+            }
+        });
+}
 </script>
 
 

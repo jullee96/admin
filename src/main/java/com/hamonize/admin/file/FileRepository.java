@@ -1,6 +1,8 @@
 package com.hamonize.admin.file;
 
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -45,4 +47,16 @@ public interface FileRepository extends JpaRepository<FileVO, String>{
     FileVO findByUseridAndSeq(String userid, Integer seq);
 
     FileVO findBySeqAndKeytype(int seq, String string);
+
+    @Query(
+        value = "select tb.img_seqs"+
+        " from tbl_boards tb where tb.img_seqs != ''" +
+        " union all"+
+        " select ts.img_seqs from tbl_support ts where ts.img_seqs != ''"+
+        " union all"+
+        " select tc.img_seqs from tbl_comments tc where tc.img_seqs != ''" 
+        , nativeQuery = true
+    )    
+    List <String> findByImgseqsNotNull();
+
 }

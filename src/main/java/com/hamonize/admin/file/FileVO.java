@@ -1,13 +1,20 @@
 package com.hamonize.admin.file;
-import java.sql.Date;
 import java.time.LocalDateTime;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Comment;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -37,8 +44,8 @@ public class FileVO {
     private String keytype;
     private String userid;
 
-    @Column(name = "ins_date")
-    private LocalDateTime insdate;
+    @Column(name = "rgstr_date")
+    private LocalDateTime rgstrdate;
 
     /**
      * 파일 크기를 정형화하기.
@@ -55,7 +62,7 @@ public class FileVO {
 
     @PrePersist
     public void createdAt() {
-        this.insdate = LocalDateTime.now();
+        this.rgstrdate = LocalDateTime.now();
     }
     
 }

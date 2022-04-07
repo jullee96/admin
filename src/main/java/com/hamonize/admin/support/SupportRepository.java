@@ -66,5 +66,7 @@ public interface SupportRepository extends JpaRepository<Support, String>{
 
     Long countByTitleContainingIgnoreCaseOrUseridContainingIgnoreCaseAndRgstrdateBetween(String keyword,
             String keyword2, LocalDateTime startDate, LocalDateTime endDate);
+
+         
     
 }

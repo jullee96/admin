@@ -26,4 +26,5 @@ public interface CommentsRespository extends JpaRepository<Comments, String>{
 
     Boolean existsBySupportseq(Long sseq);
 
+
 }

@@ -26765,6 +26765,18 @@ pre[class*="language-"] {
   background-color: #1f2b3e;
 }
 
+.badge-black {
+  color: #fff;
+  background-color: #1f2b3e;
+}
+
+.badge-black[href]:hover,
+.badge-black[href]:focus {
+  color: color-yiq(#344767);
+  text-decoration: none;
+  background-color: #1f2b3e;
+}
+
 .badge-white {
   color: #e8e3e3;
   background-color: white;
