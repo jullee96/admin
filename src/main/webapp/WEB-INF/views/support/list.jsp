@@ -165,7 +165,7 @@
                                 
                                 <td class="align-middle text-center">
                                     <c:if test='${list.status eq "P"}' >
-                                        <span class="badge badge-success badge-md">처리중</span>
+                                        <span class="badge badge-success badge-md">&nbsp;&nbsp;처리중&nbsp;&nbsp;</span>
                                     </c:if>
 
                                     <c:if test='${list.status eq "D"}' >
